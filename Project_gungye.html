@@ -1,0 +1,198 @@
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta charset="UTF-8">
+  
+    <meta name="apple-mobile-web-app-title" content="CodePen">
+
+    <title>내 남친은 어떤 인기인과 닯았을까?</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
+  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+
+    <style>
+        body {
+            background: whitesmoke;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin: 20px 0 20px;
+        }
+
+        h1 small {
+            display: block;
+            font-size: 15px;
+            padding-top: 8px;
+            color: gray;
+        }
+
+        .avatar-upload {
+            position: relative;
+            max-width: 300px;
+            margin: 50px auto;
+        }
+
+        .avatar-upload .avatar-edit {
+            position: absolute;
+            right: 30px;
+            z-index: 1;
+            top: 20px;
+        }
+
+        .avatar-upload .avatar-edit input {
+            display: none;
+        }
+
+        .avatar-upload .avatar-edit input+label {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            margin-bottom: 0;
+            border-radius: 100%;
+            background: #FFFFFF;
+            border: 1px solid transparent;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            font-weight: normal;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .avatar-upload .avatar-edit input+label:hover {
+            background: #f1f1f1;
+            border-color: #d6d6d6;
+        }
+
+        .avatar-upload .avatar-edit input+label:after {
+            content: "\f040";
+            font-family: 'FontAwesome';
+            color: #757575;
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            margin: auto;
+        }
+
+        .avatar-upload .avatar-preview {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            border-radius: 100%;
+            border: 6px solid #F8F8F8;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-upload .avatar-preview>div {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+    <script>
+        window.console = window.console || function(t) {};
+    </script>
+    <script>
+        if (document.location.search.match(/type=embed/gi)) {
+            window.parent.postMessage("resize", "*");
+        }
+    </script>
+</head>
+
+<body translate="no">
+    <div class="container">
+        <h1>우리 반에서 나의 이상형과 가장 가까운 사람은?
+			<small>with Tensorflow.js</small>
+			<small>by @jepetolee</small>
+			<small><a href="https://www.youtube.com/channel/UCTE6cr8JGHLETCOpGuntJ6Q?view_as=subscriber" target="_blank"><img src="youtube.png" style="width:20px;height:20px;" /> UNOFFICIAL FREGIC </a></small>
+        </h1>
+        
+        <div class="avatar-upload">
+            <div class="avatar-edit">
+                <input type="file" id="imageUpload" accept=".png, .jpg, .jpeg">
+                <label for="imageUpload"></label>
+            </div>
+
+            <div class="avatar-preview" onclick='imageUpload.click();'>
+                <img class="file-upload-image" id="profile-image" src="#" alt="your image" style="display:none;" />
+ 
+        <h1><button type="button" class="btn btn-dark" onclick='imageUpload.click();'>Click and upload your selfie!</button></h1>
+        <div class="input-group">
+            <div id="label-container" style="text-align:center;width:100%;"></div>
+		</div>
+	
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+
+		<script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-157cd5b220a5c80d4ff8e0e70ac069bffd87a61252088146915e8726e5d9f147.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			const URL = "./my_model/";
+			let model, webcam, labelContainer, maxPredictions;
+			async function init() {
+				const modelURL = URL + "model.json";
+				const metadataURL = URL + "metadata.json";
+				model = await tmImage.load(modelURL, metadataURL);
+				maxPredictions = model.getTotalClasses();
+				labelContainer = document.getElementById("label-container");
+				for (let i = 0; i < maxPredictions; i++) { // and class labels
+					labelContainer.appendChild(document.createElement("div"));
+				}
+			}
+			async function predict() {
+				var image = document.getElementById("profile-image");
+				const prediction = await model.predict(image, false);
+				for (let i = 0; i < maxPredictions; i++) {
+					var classPrediction = "";
+					if(prediction[i].probability >= 0.3) {
+						classPrediction = '<div style="margin:10px;">'+ prediction[i].className + ' : ' + prediction[i].probability.toFixed(4)*100.0 + '%</div><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: ' + prediction[i].probability.toFixed(4)*100 + '%" aria-valuenow="'+ prediction[i].probability.toFixed(4)*100+'" aria-valuemin="0" aria-valuemax="100"></div></div><br><br>';
+					}
+					
+					labelContainer.childNodes[i].innerHTML = classPrediction;
+						
+				}
+			}
+		</script>
+        <script id="rendered-js">
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('.file-upload-image').attr('src', e.target.result);
+                        $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
+                        $('#imagePreview').hide();
+                        $('#imagePreview').fadeIn(650);
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                    init().then(() => {
+                        console.log('hello');
+                        predict();
+                    });
+                }
+            }
+            $("#imageUpload").change(function() {
+                readURL(this);
+            });
+        </script>
+
+</body>
+
+</html>
