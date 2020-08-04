@@ -164,6 +164,7 @@
                             // Note: the pose library adds "tmImage" object to your window (window.tmImage)
                             model = await tmImage.load(modelURL, metadataURL);
                             maxPredictions = model.getTotalClasses();
+                            
                             // Convenience function to setup a webcam
                             labelContainer = document.getElementById("label-container");
                             for (let i = 0; i < maxPredictions; i++) { // and class labels
@@ -180,7 +181,21 @@
                                 if(prediction[i].probability >= 0.3) {
                                     classPrediction = '<div style="margin:10px;">'+ prediction[i].className + ' : ' + prediction[i].probability.toFixed(4)*100.0 + '%</div><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: ' + prediction[i].probability.toFixed(4)*100 + '%" aria-valuenow="'+ prediction[i].probability.toFixed(4)*100+'" aria-valuemin="0" aria-valuemax="100"></div></div><br><br>';
                                 }
-                                
+                                if (prediction[0].className=='질투'){
+                        location.href="envy1.html";
+                    }
+                    else if (prediction[0].className=='혐오'){
+                        location.href="disgust.html";
+                    }
+                    else if (prediction[0].className=='호감'){
+                        location.href="hope.html";
+                    }
+                    else if (prediction[0].className=='무표정'){
+                        location.href="nonrelation.html";
+                    }
+                    else if (prediction[0].className=='웃음'){
+                        location.href="laugh.html";
+                    }
                                 labelContainer.childNodes[i].innerHTML = classPrediction;
                
                                     
