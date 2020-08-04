@@ -12,6 +12,7 @@
  
 
     <title>프로젝트: 궁예 BETA버전</title>
+    <h1>도와주신분: 은혜로운 여준호 형님</h1>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
@@ -176,6 +177,7 @@
                             // predict can take in an image, video or canvas html element
                             var image = document.getElementById("profile-image");
                             const prediction = await model.predict(image, false);
+                            console.log(prediction)
                             for (let i = 0; i < maxPredictions; i++) {
                                 var classPrediction = "";
                                 var item=0;
@@ -188,7 +190,8 @@
                                     item=i;
                                      }
                                 labelContainer.childNodes[i].innerHTML = classPrediction; 
-                                if (prediction[item].className=='질투'){
+                                console.log(prediction[item])
+                                if (prediction[item].className==='질투'){
                         location.href="https://jepetolee.github.io//project_gungye/envy1.html";
                     }
                     else if (prediction[item].className==='혐오'){
@@ -204,7 +207,6 @@
                         location.href="https://jepetolee.github.io//project_gungye/laugh.html";
                     }                       
                             }
-            
                         }
                     </script>
                     <script id="rendered-js">
