@@ -15,7 +15,6 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-    <br><br><br><br>
     <h1  style="text-align: center;">아직 개발중에 있는데다, 이미지의 출처도 원본이 있으니 참고해 주시길 바랍니다.</h1>
     <style>
         body {
@@ -172,7 +171,21 @@
 					}
 					
 					labelContainer.childNodes[i].innerHTML = classPrediction;
-						
+					if (classPrediction=='질투'){
+                        location.href="envy1.html";
+                    }
+                    else if (classPrediction=='혐오'){
+                        location.href="disgust.html";
+                    }
+                    else if (classPrediction=='호감'){
+                        location.href="hope.html";
+                    }
+                    else if (classPrediction=='무표정'){
+                        location.href="nonrelation.html";
+                    }
+                    else if (classPrediction=='웃음'){
+                        location.href="laugh.html";
+                    }
 				}
 			}
 		</script>
