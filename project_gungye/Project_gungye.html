@@ -178,10 +178,10 @@
                             var image = document.getElementById("profile-image");
                             const prediction = await model.predict(image, false);
                             console.log(prediction)
-                            for (let i = 0; i < maxPredictions; i++) {
-                                var classPrediction = "";
                                 var item=0;
                                 var BESTONE=prediction[0].probability
+                            for (let i = 0; i < maxPredictions; i++) {
+                                var classPrediction = "";
                                 if(prediction[i].probability >= 0.3) {
                                     classPrediction = '<div style="margin:10px;">'+ prediction[i].className + ' : ' + prediction[i].probability.toFixed(4)*100.0 + '%</div><div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: ' + prediction[i].probability.toFixed(4)*100 + '%" aria-valuenow="'+ prediction[i].probability.toFixed(4)*100+'" aria-valuemin="0" aria-valuemax="100"></div></div><br><br>';
                                 }
