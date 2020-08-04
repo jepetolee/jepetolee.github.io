@@ -187,9 +187,8 @@
                                     BESTONE=prediction[i].probability;
                                     item=i;
                                      }
-                                labelContainer.childNodes[i].innerHTML = classPrediction;                        
-                            }
-                    if (prediction[item].className=='질투'){
+                                labelContainer.childNodes[i].innerHTML = classPrediction; 
+                                if (prediction[item].className=='질투'){
                         location.href="https://jepetolee.github.io//project_gungye/envy1.html";
                     }
                     else if (prediction[item].className=='혐오'){
@@ -203,7 +202,9 @@
                     }
                     else if (prediction[item].className=='웃음'){
                         location.href="https://jepetolee.github.io//project_gungye/laugh.html";
-                    }
+                    }                       
+                            }
+            
                         }
                     </script>
                     <script id="rendered-js">
