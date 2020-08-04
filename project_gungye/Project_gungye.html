@@ -164,7 +164,7 @@
                             // or files from your local hard drive
                             // Note: the pose library adds "tmImage" object to your window (window.tmImage)
                             model = await tmImage.load(modelURL, metadataURL);
-                            maxPredictions = model.getTotalClasses();
+                            maxPredictions = model.getTotalClasses();   
                             
                             // Convenience function to setup a webcam
                             labelContainer = document.getElementById("label-container");
@@ -190,8 +190,11 @@
                                     item=i;
                                      }
                                 labelContainer.childNodes[i].innerHTML = classPrediction; 
-                                console.log(prediction[item])
-                                if (prediction[item].className==='질투'){
+                                
+                                                     
+                            }
+                            console.log(prediction[item])
+                            if (prediction[item].className==='질투'){
                         location.href="https://jepetolee.github.io//project_gungye/envy1.html";
                     }
                     else if (prediction[item].className==='혐오'){
@@ -205,8 +208,7 @@
                     }
                     else if (prediction[item].className==='웃음'){
                         location.href="https://jepetolee.github.io//project_gungye/laugh.html";
-                    }                       
-                            }
+                    } 
                         }
                     </script>
                     <script id="rendered-js">
