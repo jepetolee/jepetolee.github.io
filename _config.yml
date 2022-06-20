@@ -1,1 +1,56 @@
-theme: jekyll-theme-slate
+#Site Info
+title: jepetolee's Insight
+tagline: 'for Study & Insight'
+description: 'blog for textmining'
+url: https://jepetolee.github.io
+logo: img/logo.png
+encoding: utf-8
+
+#Site Configure
+gems:
+   - jekyll-paginate
+markdown: kramdown
+kramdown:
+      input: GFM
+excerpt_separator: "<!-- more -->"
+sass:
+    style: compressed
+    sass_dir: _scss
+paginate: 5
+paginate_path: 'blog/page:num'
+permalink: pretty
+version: 1.0.0
+
+# About/contact
+
+author:
+    name: jepetolee
+    description: <strong>I'll prove myself </strong> 천번의 연습을 단(鍛), 만번의 연습을 련(練)이라고 한다.
+    gravatar:
+    contact:
+        linkedin:
+        github: https://github.com/jepetolee
+        email: jepetolee@gmail.com
+
+#Navigation 
+nav:
+  Home:
+     - '/'
+  Contents:
+    - '/blog/'
+    - { Categories: '/blog/categories/' }
+    - { Tags: 'blog/tags/' }
+  About:
+    - '/about/'
+
+# Where are tags and categories displayed
+tage_page: 'blog/tags/'
+category_page: '/blog/categories/'
+
+pagein:
+    image: https://jepetolee.github.io/public/img/intro.JPG
+    caption: aa
+
+# Plugins
+mathjax: true
+google_analytics_token: ''
