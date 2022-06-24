@@ -48,7 +48,7 @@ tage_page: 'blog/tags/'
 category_page: '/blog/categories/'
 
 pagein:
-    image: https://jepetolee.github.io/public/img/intro.JPG
+    image: https://jepetolee.github.io/public/img/intro.jpg
     caption: aa
 
 # Plugins
