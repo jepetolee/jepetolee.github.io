@@ -3,7 +3,7 @@ title: jepetolee's Insight
 tagline: 'for Study & Insight'
 description: 'blog for textmining'
 url: https://jepetolee.github.io
-logo: img/logo.png
+logo: public/logo.png
 encoding: utf-8
 
 #Site Configure
@@ -25,7 +25,8 @@ version: 1.0.0
 
 author:
     name: jepetolee
-    description: <strong>I'll prove myself </strong> 천번의 연습을 단(鍛), 만번의 연습을 련(練)이라고 한다.
+    description1: <strong>I'll prove myself </strong>
+    description2: <strong> 천번의 연습을 단(鍛), 만번의 연습을 련(練)이라고 한다.</strong> 
     gravatar: 57299826b9d09990732b37f92137aa71
     contact:
         linkedin: https://www.linkedin.com/in/lee-jepeto-7b27781b3/
@@ -49,7 +50,7 @@ category_page: '/blog/categories/'
 
 pagein:
     image: https://jepetolee.github.io/public/img/intro.jpg
-    caption: aa
+    caption: 사이트 대문은 선정 중
 
 # Plugins
 mathjax: true
