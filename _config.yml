@@ -50,7 +50,7 @@ category_page: '/blog/categories/'
 
 pagein:
     image: https://jepetolee.github.io/public/img/intro.jpg
-    caption: 사이트 대문은 선정 중
+    caption: 새로운 시대가 오길 기다리지 말고 너의 손으로 세상의 새로운 시대를 열어라
 
 # Plugins
 mathjax: true
