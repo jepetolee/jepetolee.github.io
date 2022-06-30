@@ -1,7 +1,7 @@
 #Site Info
 title: jepetolee's Insight
 tagline: 'for Study & Insight'
-description: 'blog for textmining'
+description: 'for Study & Insight'
 url: https://jepetolee.github.io
 logo: public/logo.png
 encoding: utf-8
@@ -17,7 +17,7 @@ sass:
     style: compressed
     sass_dir: _scss
 paginate: 5
-paginate_path: 'blog/page:num'
+paginate_path: 'insight/page:num'
 permalink: pretty
 version: 1.0.0
 
@@ -38,15 +38,17 @@ nav:
   Home:
      - '/'
   Contents:
-    - '/blog/'
-    - { Categories: '/blog/categories/' }
-    - { Tags: 'blog/tags/' }
+    - '/insight/'
+    - { Posts: '/insight/posts/' }
+    - { News: '/insight/news/' }
+    - { Tags: 'insight/tags/' }
   About:
     - '/about/'
 
-# Where are tags and categories displayed
-tage_page: 'blog/tags/'
-category_page: '/blog/categories/'
+# Where are tags and posts displayed
+tage_page: 'insight/tags/'
+post_page: '/insight/posts/'
+news_page: '/insight/news/'
 
 pagein:
     image: https://jepetolee.github.io/public/img/intro.jpg
