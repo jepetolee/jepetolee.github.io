@@ -9,7 +9,7 @@ title: About
 
 <p style="font-size: 1rem; font-weight: 300">관심분야</p>
 <p class="message" style="font-size: 0.8rem; font-weight: 600">
-Machine Learning, DataBase, Hadoop, Mathmetics for Computer Science
+Machine Learning, DataBase, Hadoop, Mathemetics for Computer Science
 </p>
 
 컨텍 포인트는 사이드 바에 있습니다.<br>
