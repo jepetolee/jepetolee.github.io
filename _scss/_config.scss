@@ -12,7 +12,7 @@
  $default:  #505050;
  
  $white:      #fff;
- $lightgrey:  #eee;
+ $lightgrey:  #eee6c4;
  $black:      #000;
  
  $theme-color: $black;
@@ -27,6 +27,6 @@
  $overlay-sidebar: true;
  
  /* Font stack */
- $font-serif: "PT Serif", Georgia, "Times New Roman", serif;
- $font-sans: "PT Sans", Helvetica, Arial, sans-serif;
+ $font-serif: "DejaVu Sans Mono", "PT Serif", Georgia, "Times New Roman", serif;
+ $font-sans: "DejaVu Sans Mono", "PT Sans", Helvetica, Arial, sans-serif;
  $font-font-awesome: FontAwesome;
