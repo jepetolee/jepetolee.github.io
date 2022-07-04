@@ -60,12 +60,12 @@
 
 /* Sidebar nav */
 .sidebar-nav {
-  border-bottom: 1px solid rgba(255, 255, 255, 0);
+  border-bottom: 1px solid rgba(251, 249, 240, 1);
 }
 .sidebar-nav-item {
   display: block;
   padding: 0.5rem 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0);
+  border-top: 1px solid rgba(251, 249, 240, 1);
 }
 .sidebar-nav-item-sub {
   &:before {
@@ -79,7 +79,7 @@
 a.sidebar-nav-item:hover,
 a.sidebar-nav-item:focus {
   text-decoration: none;
-  background-color: rgba(255, 255, 255, 0);
+  background-color: rgba(251, 249, 240, 1);
   border-color: transparent;
 }
 
@@ -217,9 +217,9 @@ a.sidebar-nav-item:focus {
 #sidebar-checkbox:checked ~ .sidebar {
   @include transform(translateX(if($reverse-layout, -14rem, 14rem)));
   @if $overlay-sidebar {
-    box-shadow: 0.25rem 0 0.5rem rgba(0, 0, 0, 0);
+    box-shadow: 0.25rem 0 0.5rem rgba(251, 249, 240, 1);
     @if $reverse-layout {
-      box-shadow: -0.25rem 0 0.5rem rgba(0, 0, 0, 0.1);
+      box-shadow: -0.25rem 0 0.5rem rgba(251, 249, 240, 1);
     }
   }
 }
