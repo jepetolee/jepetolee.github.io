@@ -3,12 +3,12 @@ layout: page
 title: About
 ---
 
-<div style="font-size: 1.2rem; font-weight:270; line-height: 0.8rem;">
+<div style="font-size: 0.8rem; font-weight:270; line-height: 1.5rem;">
 
 본명: 이재석 <br>
 
-<p style="font-size: 1.4rem; font-weight: 300">관심분야</p>
-<p class="message" style="font-size: 1.5rem; font-weight: 600">
+<p style="font-size: 1rem; font-weight: 300">관심분야</p>
+<p class="message" style="font-size: 0.8rem; font-weight: 600">
 Machine Learning, DataBase, Hadoop, Mathmetics for Computer Science
 </p>
 
