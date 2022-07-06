@@ -40,7 +40,6 @@ nav:
   Contents:
     - '/insight/'
     - { Posts: '/insight/posts/' }
-    - { News: '/insight/news/' }
     - { Tags: '/insight/tags/' }
   About:
     - '/about/'
@@ -48,7 +47,6 @@ nav:
 # Where are tags and posts displayed
 tage_page: '/insight/tags/'
 post_page: '/insight/posts/'
-news_page: '/insight/news/'
 
 pagein:
     image: https://jepetolee.github.io/public/img/intro.jpg
