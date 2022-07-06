@@ -17,7 +17,7 @@ sass:
     style: compressed
     sass_dir: _scss
 paginate: 5
-paginate_path: 'insight/page:num'
+paginate_path: '/insight/page:num'
 permalink: pretty
 version: 1.0.0
 
@@ -41,12 +41,12 @@ nav:
     - '/insight/'
     - { Posts: '/insight/posts/' }
     - { News: '/insight/news/' }
-    - { Tags: 'insight/tags/' }
+    - { Tags: '/insight/tags/' }
   About:
     - '/about/'
 
 # Where are tags and posts displayed
-tage_page: 'insight/tags/'
+tage_page: '/insight/tags/'
 post_page: '/insight/posts/'
 news_page: '/insight/news/'
 
