@@ -1,7 +1,6 @@
 ---
-layout: post
 title: hello
-category: posts
+category: Reinforcement Learning
 tag: addadd
 ---
 

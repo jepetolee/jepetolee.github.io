@@ -1,7 +1,6 @@
 ---
-layout: post
 title: hello
-category: posts
+category: Mathematics
 tag: addadd
 ---
 
