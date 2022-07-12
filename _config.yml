@@ -55,3 +55,4 @@ pagein:
 # Plugins
 mathjax: true
 google_analytics_token: 'G-9F6FRCP1DK'
+disqus_short_name: 'jepetolee'
