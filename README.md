@@ -1,5 +1,3 @@
 # jepetolee.github.io
 ###### jepetolee's Insight
-
-###### ratsgo 님의 블로그를 참고해 만들고 있어요!
-
+[개발에 참고한 블로그](ratsgo.github.io)
