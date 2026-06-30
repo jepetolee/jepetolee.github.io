@@ -1,0 +1,98 @@
+---
+import Icon from './Icon.astro';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  url: string;
+  title: string;
+  date: Date;
+  tags?: string[];
+  description?: string;
+  category?: string;
+}
+
+const { url, title, date, tags = [], description, category } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<article class="post-card">
+  <h2 class="post-card__title"><a href={url}>{title}</a></h2>
+  <div class="post-card__meta">
+    <FormattedDate date={date} />
+    {category && <><span aria-hidden="true">·</span><span>{category}</span></>}
+  </div>
+  {description && <p class="post-card__excerpt">{description}</p>}
+  <div class="post-card__footer">
+    <div class="post-card__tags">
+      {tags.map((tag) => (
+        <a class="post-tag" href={`${base}/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+      ))}
+    </div>
+    <a class="post-card__readmore" href={url}>
+      Read more <Icon name="arrow-right" />
+    </a>
+  </div>
+</article>
+
+<style>
+  .post-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    transition: box-shadow var(--transition), border-color var(--transition);
+  }
+  .post-card:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent);
+  }
+  .post-card__title {
+    font-size: 1.125rem;
+    margin-bottom: 0.4rem;
+  }
+  .post-card__title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .post-card__title a:hover { color: var(--color-accent); }
+  .post-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .post-card__excerpt {
+    font-family: var(--font-serif);
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0 0 1rem;
+  }
+  .post-card__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .post-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .post-card__readmore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .post-card__readmore:hover { text-decoration: none; }
+  .post-card__readmore :global(svg) { width: 0.875rem; height: 0.875rem; }
+</style>

@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getPublishedPosts, getSeries, postUrl } from '../utils/posts';
+import { SITE } from '../config';
+
+const posts = await getPublishedPosts();
+const featured = posts.filter((p) => p.data.featured).slice(0, 3);
+const recent = posts.slice(0, 5);
+const series = await getSeries();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout narrow={true}>
+  <section class="hero">
+    <img class="hero__image" src={`${base}/public/img/intro.jpg`} alt={SITE.author.name} width="128" height="128" />
+    <h1 class="hero__title">{SITE.title}</h1>
+    <p class="hero__tagline">{SITE.tagline}</p>
+    <p class="hero__intro">{SITE.author.intro}</p>
+    <div class="hero__actions">
+      <a class="btn" href={`${base}/insight/`}>글 둘러보기</a>
+      <a class="btn btn--outline" href={`${base}/about/`}>About</a>
+    </div>
+  </section>
+
+  {featured.length > 0 && (
+    <section class="home-section">
+      <h2 class="section-title">추천 글</h2>
+      <div class="post-list">
+        {featured.map((post) => (
+          <PostCard
+            url={postUrl(post.id)}
+            title={post.data.title}
+            date={post.data.date}
+            tags={post.data.tags}
+            description={post.data.description}
+            category={post.data.category}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="home-section">
+    <h2 class="section-title">최근 글</h2>
+    <div class="post-list">
+      {recent.map((post) => (
+        <PostCard
+          url={postUrl(post.id)}
+          title={post.data.title}
+          date={post.data.date}
+          tags={post.data.tags}
+          description={post.data.description}
+          category={post.data.category}
+        />
+      ))}
+    </div>
+    <div class="home-section__more">
+      <a class="btn btn--outline" href={`${base}/insight/`}>모든 글 보기</a>
+    </div>
+  </section>
+
+  {series.size > 0 && (
+    <section class="home-section">
+      <h2 class="section-title">시리즈</h2>
+      <div class="series-grid">
+        {[...series.entries()].map(([name, list]) => (
+          <a class="series-card" href={`${base}/series/${encodeURIComponent(name)}/`}>
+            <span class="series-card__name">{name}</span>
+            <span class="series-card__count">{list.length}편</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .hero {
+    text-align: center;
+    padding: 2rem 0 3rem;
+  }
+  .hero__image {
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    border: 3px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+  }
+  .hero__title { font-size: 1.75rem; margin-bottom: 0.5rem; }
+  @media (min-width: 640px) {
+    .hero__title { font-size: 2.25rem; }
+  }
+  .hero__tagline { font-size: 1rem; color: var(--color-text-muted); margin-bottom: 0.75rem; }
+  .hero__intro {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    max-width: 36rem;
+    margin: 0 auto 1.5rem;
+    line-height: 1.7;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .home-section { margin-top: 3rem; }
+  .home-section__more { margin-top: 1.5rem; text-align: center; }
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+  .series-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color var(--transition);
+  }
+  .series-card:hover { border-color: var(--color-accent); text-decoration: none; }
+  .series-card__name { font-weight: 600; }
+  .series-card__count { font-size: 0.8125rem; color: var(--color-text-muted); }
+</style>

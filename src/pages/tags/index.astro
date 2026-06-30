@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllTags } from '../../utils/posts';
+
+const tags = await getAllTags();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Tags" description="태그별 글 모음" narrow={true}>
+  <h1 class="page-title">Tags</h1>
+  <p class="page-sub">관심 있는 주제를 골라 글을 찾아보세요.</p>
+
+  <div class="tag-cloud">
+    {tags.map(({ tag, count }) => (
+      <a class="tag-cloud__item" href={`${base}/tags/${encodeURIComponent(tag)}/`}>
+        {tag} <span class="tag-cloud__count">{count}</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .page-sub { color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 2rem; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .tag-cloud__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--color-text);
+  }
+  .tag-cloud__item:hover { border-color: var(--color-accent); color: var(--color-accent); text-decoration: none; }
+  .tag-cloud__count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background: var(--color-tag-bg);
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPublishedPosts, postUrl } from '../../utils/posts';
+import { SITE } from '../../config';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPublishedPosts();
+  return paginate(posts, { pageSize: SITE.postsPerPage });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<CollectionEntry<'posts'>>;
+}
+const { page } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Insight" description="전체 글 아카이브" narrow={true}>
+  <h1 class="page-title">Insight</h1>
+  <p class="page-sub">전체 글을 시간순으로 모았습니다. ({page.total}편)</p>
+
+  <div class="post-list">
+    {page.data.map((post) => (
+      <PostCard
+        url={postUrl(post.id)}
+        title={post.data.title}
+        date={post.data.date}
+        tags={post.data.tags}
+        description={post.data.description}
+        category={post.data.category}
+      />
+    ))}
+  </div>
+
+  <nav class="pagination" aria-label="Pagination">
+    {page.url.prev ? (
+      <a class="pagination__item" href={page.url.prev}>← 최신</a>
+    ) : (
+      <span class="pagination__item pagination__item--disabled">← 최신</span>
+    )}
+    <span class="pagination__count">{page.currentPage} / {page.lastPage}</span>
+    {page.url.next ? (
+      <a class="pagination__item" href={page.url.next}>이전 →</a>
+    ) : (
+      <span class="pagination__item pagination__item--disabled">이전 →</span>
+    )}
+  </nav>
+</BaseLayout>
+
+<style>
+  .page-title { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .page-sub { color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 1.5rem; }
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+  .pagination__item {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+  .pagination__item:hover { border-color: var(--color-accent); color: var(--color-accent); text-decoration: none; }
+  .pagination__item--disabled { opacity: 0.4; pointer-events: none; }
+  .pagination__count { color: var(--color-text-muted); }
+</style>

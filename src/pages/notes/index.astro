@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getNotes, noteUrl } from '../../utils/posts';
+
+const notes = await getNotes();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Notes" description="논문과 모델에 대한 짧은 노트" narrow={true}>
+  <h1 class="page-title">Notes</h1>
+  <p class="page-sub">긴 글로 정리하기 전, 논문·모델·아이디어를 짧게 기록합니다.</p>
+
+  <ul class="note-list">
+    {notes.map((note) => (
+      <li class="note-item">
+        <a class="note-item__link" href={noteUrl(note.id)}>{note.data.title}</a>
+        <div class="note-item__meta">
+          <FormattedDate date={note.data.date} />
+          {note.data.source && <><span aria-hidden="true">·</span><span>{note.data.source}</span></>}
+        </div>
+        {note.data.description && <p class="note-item__desc">{note.data.description}</p>}
+        <div class="note-item__tags">
+          {note.data.tags.map((tag) => (
+            <a class="post-tag" href={`${base}/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+          ))}
+        </div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
+
+<style>
+  .page-title { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .page-sub { color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 2rem; }
+  .note-list { list-style: none; padding: 0; margin: 0; }
+  .note-item {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .note-item__link { font-weight: 600; font-size: 1.05rem; }
+  .note-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin: 0.3rem 0;
+  }
+  .note-item__desc {
+    margin: 0.4rem 0 0.6rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-serif);
+  }
+  .note-item__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+</style>

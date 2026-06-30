@@ -1,0 +1,61 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getSeries, postUrl } from '../../utils/posts';
+
+export const getStaticPaths = (async () => {
+  const series = await getSeries();
+  return [...series.entries()].map(([name, posts]) => ({
+    params: { series: name },
+    props: { name, posts },
+  }));
+}) satisfies GetStaticPaths;
+
+const { name, posts } = Astro.props;
+---
+
+<BaseLayout title={`${name} 시리즈`} description={`${name} 시리즈의 글 모음`} narrow={true}>
+  <h1 class="page-title">{name} <span class="page-title__tag">시리즈</span></h1>
+  <p class="page-sub">{posts.length}편 · 오래된 순서</p>
+
+  <div class="post-list">
+    {posts.map((post, i) => (
+      <div class="series-entry">
+        <span class="series-entry__num">{i + 1}</span>
+        <div class="series-entry__card">
+          <PostCard
+            url={postUrl(post.id)}
+            title={post.data.title}
+            date={post.data.date}
+            tags={post.data.tags}
+            description={post.data.description}
+            category={post.data.category}
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .page-title__tag { font-size: 1rem; color: var(--color-text-muted); font-weight: 400; }
+  .page-sub { color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 1.5rem; }
+  .series-entry { display: flex; gap: 0.75rem; align-items: flex-start; }
+  .series-entry__num {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: 1.25rem;
+    background: var(--color-accent);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .series-entry__card { flex: 1; min-width: 0; }
+</style>
