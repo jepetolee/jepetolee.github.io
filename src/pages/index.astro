@@ -15,7 +15,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <BaseLayout narrow={true}>
   <section class="hero">
-    <img class="hero__image" src={`${base}/logo.png`} alt={SITE.title} width="96" height="96" />
+    <span class="hero__image" role="img" aria-label={SITE.title}></span>
     <h1 class="hero__title">{SITE.title}</h1>
     <p class="hero__tagline">{SITE.tagline}</p>
     <p class="hero__intro">{SITE.author.intro}</p>
@@ -111,14 +111,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     padding: 2rem 0 3rem;
   }
   .hero__image {
+    display: inline-block;
     width: 6rem;
     height: 6rem;
-    object-fit: contain;
+    background: var(--color-text);
+    mask: url('/logo.png') center / contain no-repeat;
+    -webkit-mask: url('/logo.png') center / contain no-repeat;
     margin-bottom: 1.25rem;
-  }
-  :global(:root[data-theme='dark']) .hero__image { filter: invert(1); }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .hero__image { filter: invert(1); }
   }
   .hero__title { font-size: 1.75rem; margin-bottom: 0.5rem; }
   @media (min-width: 640px) {

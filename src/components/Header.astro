@@ -14,7 +14,7 @@ function isActive(href: string) {
 <header class="site-header">
   <div class="site-header__inner container">
     <a class="site-header__brand" href={`${base}/`}>
-      <img class="site-header__logo" src={`${base}/logo.png`} alt={SITE.title} width="30" height="30" />
+      <span class="site-header__logo" aria-hidden="true"></span>
       <span>{SITE.title}</span>
     </a>
 
@@ -72,16 +72,32 @@ function isActive(href: string) {
     color: var(--color-text);
     text-decoration: none;
     flex-shrink: 0;
+    min-width: 0;
   }
   .site-header__brand:hover { text-decoration: none; }
+  .site-header__brand span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 420px) {
+    .site-header__brand span:last-child {
+      max-width: 9rem;
+    }
+  }
+  @media (max-width: 360px) {
+    .site-header__brand span:last-child {
+      display: none;
+    }
+  }
   .site-header__logo {
+    flex-shrink: 0;
+    display: inline-block;
     height: 30px;
     width: 30px;
-    object-fit: contain;
-  }
-  :global(:root[data-theme='dark']) .site-header__logo { filter: invert(1); }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .site-header__logo { filter: invert(1); }
+    background: currentColor;
+    mask: url('/logo.png') center / contain no-repeat;
+    -webkit-mask: url('/logo.png') center / contain no-repeat;
   }
 
   .site-nav {
@@ -89,7 +105,7 @@ function isActive(href: string) {
     align-items: center;
     gap: 0.25rem;
   }
-  @media (min-width: 880px) {
+  @media (min-width: 980px) {
     .site-nav { display: flex; }
   }
   .site-nav__link {
@@ -112,13 +128,14 @@ function isActive(href: string) {
     display: flex;
     align-items: center;
     gap: 0.4rem;
+    flex-shrink: 0;
   }
   .site-header__social {
     display: none;
     align-items: center;
     gap: 0.25rem;
   }
-  @media (min-width: 880px) {
+  @media (min-width: 1080px) {
     .site-header__social { display: flex; }
   }
   .icon-btn {
@@ -142,7 +159,7 @@ function isActive(href: string) {
   .icon-btn :global(svg) { width: 1.125rem; height: 1.125rem; }
 
   .site-header__menu { display: flex; }
-  @media (min-width: 880px) {
+  @media (min-width: 980px) {
     .site-header__menu { display: none; }
   }
 
@@ -153,7 +170,7 @@ function isActive(href: string) {
     border-top: 1px solid var(--color-border);
   }
   .mobile-nav.is-open { display: flex; }
-  @media (min-width: 880px) {
+  @media (min-width: 980px) {
     .mobile-nav.is-open { display: none; }
   }
   .mobile-nav__link {
