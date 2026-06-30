@@ -1,0 +1,10 @@
+{
+  "remote.autoForwardPorts": true,
+  "remote.autoForwardPortsSource": "output",
+  "remote.portsAttributes": {
+    "4000": {
+      "label": "Jekyll Site",
+      "onAutoForward": "notify"
+    }
+  }
+}

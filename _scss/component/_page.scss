@@ -1,8 +1,46 @@
 .page {
-    margin-bottom: 4em;
-    .page-title {
-      color: $theme-color;
-      margin-top: 0;
-      text-transform: uppercase;
-    }
-  }
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.page-content {
+  margin-top: 1rem;
+}
+
+.about-page__meta {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.about-page__section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.about-page__interests {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.error-page {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.error-page__code {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}

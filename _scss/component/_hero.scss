@@ -1,10 +1,69 @@
 .hero {
-    text-align: center;
-    font-size: 0.8rem;
-    img {
-      height: 28rem;
-      width: auto;
-      display: inline;
-      margin-top: -1rem;
-    }
+  text-align: center;
+  padding: 2rem 0 3rem;
+}
+
+.hero__image {
+  width: 8rem;
+  height: 8rem;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 1.5rem;
+  border: 3px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero__title {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+
+  @media (min-width: 640px) {
+    font-size: 2.25rem;
   }
+}
+
+.hero__tagline {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.hero__caption {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+  max-width: 36rem;
+  margin: 0 auto 1.5rem;
+  line-height: 1.7;
+}
+
+.hero__bio {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.recent-posts {
+  margin-top: 3rem;
+}
+
+.recent-posts__footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}

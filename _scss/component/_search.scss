@@ -1,0 +1,115 @@
+.search-dialog {
+  width: 90vw;
+  max-width: 640px;
+  max-height: 80vh;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+
+  &::backdrop {
+    background: rgba(15, 23, 42, 0.5);
+  }
+}
+
+.search-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.search-dialog__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.search-dialog__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font-size: 1.25rem;
+  line-height: 1;
+
+  &:hover,
+  &:focus {
+    background: var(--color-code-bg);
+    color: var(--color-text);
+  }
+}
+
+.search-dialog__body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.search-dialog__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  outline: none;
+  transition: border-color var(--transition);
+
+  &:focus {
+    border-color: var(--color-accent);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+}
+
+#results-container {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+#results-container li,
+#results-container h4 {
+  margin: 0 0 0.75rem;
+}
+
+#results-container a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background var(--transition);
+
+  &:hover,
+  &:focus {
+    background: var(--color-tag-bg);
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  small {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin-top: 0.15rem;
+  }
+}
+
+.search-no-results {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  margin: 1rem 0 0;
+}

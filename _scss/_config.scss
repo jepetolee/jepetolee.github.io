@@ -1,33 +1,76 @@
-/* Colors 
- * Based on colors from Base16: http://chriskempson.github.io/base16/#default.
- */
- $red:      #ac4142;
- $orange:   #d28445;
- $yellow:   #f4bf75;
- $green:    #90a959;
- $cyan:     #75b5aa;
- $blue:     #6a9fb5;
- $magenta:  #aa759f;
- $brown:    #8f5536;
- $default:  #505050;
- 
- $alpha:      #FBF9F0;
- $white:      #fff;
- $lightgrey:  #eee6c4;
- $black:      #000;
- 
- $theme-color: $black;
- $theme-color-dark: darken($theme-color, 10%);
- 
- $post-date-color: #9a9a9a;
- $title-color: #000;
- $masthead-title-small-color: #c0c0c0;
- 
- /* Layout */
- $reverse-layout: false;
- $overlay-sidebar: true;
- 
- /* Font stack */
- $font-serif: "DejaVu Sans Mono", "PT Serif", Georgia, "Times New Roman", serif;
- $font-sans: "DejaVu Sans Mono", "PT Sans", Helvetica, Arial, sans-serif;
- $font-font-awesome: FontAwesome;
+/* Design tokens */
+:root {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-border: #e2e8f0;
+  --color-code-bg: #f1f5f9;
+  --color-tag-bg: #eff6ff;
+  --color-tag-text: #1e40af;
+  --font-sans: 'Inter', 'Noto Sans KR', system-ui, sans-serif;
+  --font-serif: 'Source Serif 4', 'Noto Serif KR', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Noto Sans Mono', monospace;
+  --max-width: 720px;
+  --max-width-wide: 960px;
+  --header-height: 4rem;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 4px 12px rgba(15, 23, 42, 0.1);
+  --transition: 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-accent: #60a5fa;
+    --color-accent-hover: #93c5fd;
+    --color-border: #334155;
+    --color-code-bg: #1e293b;
+    --color-tag-bg: #1e3a5f;
+    --color-tag-text: #93c5fd;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-accent: #60a5fa;
+  --color-accent-hover: #93c5fd;
+  --color-border: #334155;
+  --color-code-bg: #1e293b;
+  --color-tag-bg: #1e3a5f;
+  --color-tag-text: #93c5fd;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="light"] {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-border: #e2e8f0;
+  --color-code-bg: #f1f5f9;
+  --color-tag-bg: #eff6ff;
+  --color-tag-text: #1e40af;
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+/* Legacy SCSS variables for syntax highlighting compatibility */
+$theme-color: #2563eb;
+$lightgrey: #e2e8f0;
+$post-date-color: #64748b;
+$white: #fff;

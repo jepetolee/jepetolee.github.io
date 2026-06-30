@@ -4,7 +4,12 @@ title: "404: Page not found"
 permalink: 404.html
 ---
 
-<div class="page">
-  <h1 class="page-title">404 페이지 에러</h1>
-  <p class="lead">죄송합니다 URL로 요청하신 페이지가 나오지 않습니다. </p>
+<div class="page error-page">
+  <p class="error-page__code">404</p>
+  <h1 class="page-title">페이지를 찾을 수 없습니다</h1>
+  <p class="lead">요청하신 URL의 페이지가 존재하지 않습니다.</p>
+  <div class="hero__actions">
+    <a class="btn" href="{{ site.baseurl }}/">홈으로</a>
+    <a class="btn btn--outline" href="{{ site.baseurl }}/insight/">글 목록</a>
+  </div>
 </div>

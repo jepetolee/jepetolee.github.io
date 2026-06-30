@@ -3,7 +3,35 @@ layout: default
 title: Home
 ---
 
-<div class="pagein">
-  <img src="{{ site.baseurl }}{{ site.pagein.image }}" />
-  <p style="text-align: center;">{{ site.pagein.caption }}</p>
-</div>
+<section class="hero">
+  {% if site.pagein.image %}
+  <img class="hero__image" src="{{ site.baseurl }}{{ site.pagein.image }}" alt="{{ site.author.name }}">
+  {% endif %}
+  <h1 class="hero__title">{{ site.title }}</h1>
+  <p class="hero__tagline">{{ site.tagline }}</p>
+  {% if site.author.description1 %}
+  <p class="hero__bio">{{ site.author.description1 }}</p>
+  {% endif %}
+  {% if site.author.description2 %}
+  <p class="hero__bio">{{ site.author.description2 }}</p>
+  {% endif %}
+  {% if site.pagein.caption %}
+  <p class="hero__caption">{{ site.pagein.caption }}</p>
+  {% endif %}
+  <div class="hero__actions">
+    <a class="btn" href="{{ site.baseurl }}/insight/">글 목록 보기</a>
+    <a class="btn btn--outline" href="{{ site.baseurl }}/about/">About</a>
+  </div>
+</section>
+
+<section class="recent-posts">
+  <h2 class="section-title">최근 글</h2>
+  <div class="post-list">
+    {% for post in site.posts limit:5 %}
+      {% include post-card.html post=post %}
+    {% endfor %}
+  </div>
+  <div class="recent-posts__footer">
+    <a class="btn btn--outline" href="{{ site.baseurl }}/insight/">모든 글 보기</a>
+  </div>
+</section>

@@ -4,11 +4,12 @@ tagline: 'for Study & Insight'
 description: 'for Study & Insight'
 url: https://jepetolee.github.io
 logo: public/logo.png
+lang: ko
 encoding: utf-8
 
 #Site Configure
-gems:
-   - jekyll-paginate
+plugins:
+  - jekyll-paginate
 markdown: kramdown
 kramdown:
       input: GFM
@@ -49,7 +50,7 @@ tage_page: '/insight/tags/'
 post_page: '/insight/posts/'
 
 pagein:
-    image: https://jepetolee.github.io/public/img/intro.jpg
+    image: /public/img/intro.jpg
     caption: 새로운 시대가 오길 기다리지 말고 너의 손으로 세상의 새로운 시대를 열어라
 
 # Plugins

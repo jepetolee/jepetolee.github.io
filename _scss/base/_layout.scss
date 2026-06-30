@@ -1,39 +1,30 @@
-/*
- * Wrapper
- *
- * The wrapper is used to position site content when the sidebar is toggled. We
- * use an outter wrap to position the sidebar without interferring with the
- * regular page content.
- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius);
+  text-decoration: none;
 
- .wrap {
-    position: relative;
-    width: 100%;
+  &:focus {
+    top: 1rem;
+    color: #fff;
   }
-  
-  
-  /*
-   * Container
-   *
-   * Center the page content.
-   */
-  
-  .container {
-    max-width: 28rem;
-    a {
-      @if $theme-color != $default { color: $theme-color; }
-    }
-  }
-  @media (min-width: 38em) {
-    .container {
-      max-width: 32rem;
-      &.content {
-        padding-top: 6.5rem;
-      }
-    }
-  }
-  @media (min-width: 56em) {
-    .container {
-      max-width: 38rem;
-    }
-  }
+}
+
+.site-main {
+  min-height: calc(100vh - var(--header-height) - 8rem);
+  padding: 2rem 1.25rem 4rem;
+}
+
+.container {
+  max-width: var(--max-width-wide);
+  margin: 0 auto;
+}
+
+.container--narrow {
+  max-width: var(--max-width);
+}

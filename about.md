@@ -3,18 +3,16 @@ layout: page
 title: About
 ---
 
-<div style="font-size: 0.8rem; font-weight:270; line-height: 1.5rem;">
-
-블로그 게시자: 이재석 <br>
-
-<p style="font-size: 1rem; font-weight: 300">관심분야</p>
-<p class="message" style="font-size: 0.8rem; font-weight: 600">
-Machine Learning, Data Science, NeuroScience , Mathemetics for Computer Science
-</p>
-
-연락처는 사이드 바에 있습니다.<br>
-블로그 포스트 아래에 댓글을 달 수 있는 란을 만들어뒀습니다.
-
+<div class="about-page">
+  <div class="about-page__meta">
+    <p>블로그 게시자: 이재석</p>
+    <p class="about-page__section-title">관심분야</p>
+    <p class="message about-page__interests">
+      Machine Learning, Data Science, NeuroScience, Mathemetics for Computer Science
+    </p>
+    <p>연락처는 상단 내비게이션과 푸터에 있습니다.</p>
+    <p>블로그 포스트 아래에 댓글을 달 수 있는 란을 만들어뒀습니다.</p>
+  </div>
 </div>
 
 # 머릿말
