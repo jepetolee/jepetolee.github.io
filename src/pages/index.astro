@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LogoMark from '../components/LogoMark.astro';
 import PostCard from '../components/PostCard.astro';
 import { getPublishedPosts, getSeries, getPapers, postUrl, paperUrl } from '../utils/posts';
 import { SITE } from '../config';
@@ -16,7 +15,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <BaseLayout narrow={true}>
   <section class="hero">
-    <LogoMark class="hero__image" title={SITE.title} />
+    <img class="hero__image" src={`${base}/logo.png`} alt={SITE.title} width="96" height="96" />
     <h1 class="hero__title">{SITE.title}</h1>
     <p class="hero__tagline">{SITE.tagline}</p>
     <p class="hero__intro">{SITE.author.intro}</p>
@@ -114,8 +113,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .hero__image {
     width: 6rem;
     height: 6rem;
-    color: var(--color-text);
+    object-fit: contain;
     margin-bottom: 1.25rem;
+  }
+  :global(:root[data-theme='dark']) .hero__image { filter: invert(1); }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .hero__image { filter: invert(1); }
   }
   .hero__title { font-size: 1.75rem; margin-bottom: 0.5rem; }
   @media (min-width: 640px) {
