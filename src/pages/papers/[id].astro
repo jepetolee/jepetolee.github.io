@@ -1,0 +1,241 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Giscus from '../../components/Giscus.astro';
+import Icon from '../../components/Icon.astro';
+import {
+  getPapers,
+  getPaperReferences,
+  getPapersCiting,
+  paperUrl,
+} from '../../utils/posts';
+
+export const getStaticPaths = (async () => {
+  const papers = await getPapers();
+  return papers.map((paper) => ({ params: { id: paper.id }, props: { paper } }));
+}) satisfies GetStaticPaths;
+
+const { paper } = Astro.props;
+const { Content } = await render(paper);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const references = await getPaperReferences(paper);
+const citedBy = await getPapersCiting(paper);
+const d = paper.data;
+---
+
+<BaseLayout title={d.title} description={d.description} article={true} narrow={true}>
+  <article class="paper" data-pagefind-body>
+    <nav class="paper__crumbs" aria-label="Breadcrumb">
+      <a href={`${base}/papers/`}>논문 리뷰</a>
+      <span aria-hidden="true">/</span>
+      <span>{d.category}</span>
+      {d.subcategory && <><span aria-hidden="true">/</span><span>{d.subcategory}</span></>}
+    </nav>
+
+    <header class="paper__header">
+      <span class="kind-badge kind-badge--paper">PAPER</span>
+      <h1 class="paper__title">{d.title}</h1>
+      {(d.paper || d.authors || d.year || d.venue) && (
+        <div class="paper__source">
+          {d.paper && (
+            d.paperUrl
+              ? <a class="paper__source-name" href={d.paperUrl}>{d.paper}<Icon name="arrow-right" /></a>
+              : <span class="paper__source-name">{d.paper}</span>
+          )}
+          <span class="paper__source-meta">
+            {[d.authors, d.venue, d.year].filter(Boolean).join(' · ')}
+          </span>
+        </div>
+      )}
+      <div class="paper__meta">
+        <FormattedDate date={d.date} />
+        {d.tags.length > 0 && (
+          <div class="paper__tags">
+            {d.tags.map((tag) => (
+              <a class="post-tag" href={`${base}/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+
+    {references.length > 0 && (
+      <aside class="ref-chain" aria-label="참고한 논문">
+        <p class="ref-chain__label">먼저 읽으면 좋은 선행 리뷰</p>
+        <ol class="ref-chain__list">
+          {references.map((ref, i) => (
+            <li>
+              <span class="ref-chain__num">{i + 1}</span>
+              <a href={paperUrl(ref.id)}>{ref.data.title}</a>
+            </li>
+          ))}
+        </ol>
+      </aside>
+    )}
+
+    <div class="paper__body prose">
+      <Content />
+    </div>
+
+    {citedBy.length > 0 && (
+      <aside class="cited-by" aria-label="이 리뷰를 참고한 후속 리뷰">
+        <p class="cited-by__label">이 논문을 기반으로 한 후속 리뷰</p>
+        <div class="cited-by__grid">
+          {citedBy.map((next) => (
+            <a class="cited-by__card" href={paperUrl(next.id)}>
+              <span class="cited-by__title">{next.data.title}</span>
+              <Icon name="arrow-right" />
+            </a>
+          ))}
+        </div>
+      </aside>
+    )}
+  </article>
+  <Giscus />
+</BaseLayout>
+
+<style>
+  .paper { max-width: var(--max-width); margin: 0 auto; }
+  .paper__crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+  .paper__crumbs a { color: var(--color-text-muted); }
+  .paper__crumbs a:hover { color: var(--color-accent); }
+
+  .paper__header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .kind-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.6rem;
+  }
+  .kind-badge--paper {
+    color: var(--color-paper-line);
+    background: transparent;
+    border: 1px solid var(--color-paper-line);
+  }
+  .paper__title { font-size: 1.7rem; margin: 0 0 0.75rem; }
+  .paper__source {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 0.85rem;
+    background: var(--color-paper-soft);
+    border-left: 3px solid var(--color-paper-line);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 0.85rem;
+  }
+  .paper__source-name {
+    font-weight: 600;
+    font-size: 0.92rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .paper__source-name :global(svg) { width: 0.8rem; height: 0.8rem; }
+  .paper__source-meta { font-size: 0.8rem; color: var(--color-text-muted); }
+  .paper__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+  .paper__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+  /* 선행 reference 체인 */
+  .ref-chain {
+    margin: 0 0 2rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius);
+  }
+  .ref-chain__label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0 0 0.5rem;
+  }
+  .ref-chain__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .ref-chain__list li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.9rem;
+  }
+  .ref-chain__num {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border-radius: 50%;
+  }
+
+  /* 후속 인용 리뷰 */
+  .cited-by {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .cited-by__label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0 0 0.75rem;
+  }
+  .cited-by__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+  .cited-by__card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    transition: border-color var(--transition);
+  }
+  .cited-by__card:hover { border-color: var(--color-accent); text-decoration: none; }
+  .cited-by__title { font-weight: 500; font-size: 0.9rem; }
+  .cited-by__card :global(svg) { width: 0.9rem; height: 0.9rem; flex-shrink: 0; }
+</style>

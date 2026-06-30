@@ -9,17 +9,22 @@ interface Props {
   tags?: string[];
   description?: string;
   category?: string;
+  kind?: 'post' | 'paper';
 }
 
-const { url, title, date, tags = [], description, category } = Astro.props;
+const { url, title, date, tags = [], description, category, kind = 'post' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const badgeLabel = kind === 'paper' ? 'PAPER' : 'POST';
 ---
 
-<article class="post-card">
+<article class:list={['post-card', `post-card--${kind}`]}>
+  <div class="post-card__top">
+    <span class:list={['kind-badge', `kind-badge--${kind}`]}>{badgeLabel}</span>
+    {category && <span class="post-card__cat">{category}</span>}
+  </div>
   <h2 class="post-card__title"><a href={url}>{title}</a></h2>
   <div class="post-card__meta">
     <FormattedDate date={date} />
-    {category && <><span aria-hidden="true">·</span><span>{category}</span></>}
   </div>
   {description && <p class="post-card__excerpt">{description}</p>}
   <div class="post-card__footer">
@@ -44,10 +49,43 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     box-shadow: var(--shadow);
     transition: box-shadow var(--transition), border-color var(--transition);
   }
+  /* 페이퍼 리뷰는 왼쪽 강조선으로 한눈에 구분 */
+  .post-card--paper {
+    border-left: 3px solid var(--color-paper-line);
+  }
   .post-card:hover {
     box-shadow: var(--shadow-lg);
     border-color: var(--color-accent);
   }
+
+  .post-card__top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .kind-badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+  }
+  .kind-badge--post {
+    color: var(--color-post-text);
+    background: var(--color-post-bg);
+  }
+  .kind-badge--paper {
+    color: var(--color-paper-line);
+    background: transparent;
+    border: 1px solid var(--color-paper-line);
+  }
+  .post-card__cat {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
   .post-card__title {
     font-size: 1.125rem;
     margin-bottom: 0.4rem;

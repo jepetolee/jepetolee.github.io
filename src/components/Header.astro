@@ -14,7 +14,7 @@ function isActive(href: string) {
 <header class="site-header">
   <div class="site-header__inner container">
     <a class="site-header__brand" href={`${base}/`}>
-      <img class="site-header__logo" src={`${base}/public/logo.png`} alt={SITE.title} width="28" height="28" />
+      <img class="site-header__logo" src={`${base}/public/logo.png`} alt={SITE.title} width="30" height="30" />
       <span>{SITE.title}</span>
     </a>
 
@@ -74,7 +74,16 @@ function isActive(href: string) {
     flex-shrink: 0;
   }
   .site-header__brand:hover { text-decoration: none; }
-  .site-header__logo { height: 28px; width: auto; }
+  .site-header__logo {
+    height: 30px;
+    width: 30px;
+    object-fit: contain;
+  }
+  /* Black-on-transparent mark flips to white in dark mode */
+  :global(:root[data-theme='dark']) .site-header__logo { filter: invert(1); }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .site-header__logo { filter: invert(1); }
+  }
 
   .site-nav {
     display: none;

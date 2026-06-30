@@ -1,25 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
-import { getPublishedPosts, getSeries, postUrl } from '../utils/posts';
+import { getPublishedPosts, getSeries, getPapers, postUrl, paperUrl } from '../utils/posts';
 import { SITE } from '../config';
 
 const posts = await getPublishedPosts();
 const featured = posts.filter((p) => p.data.featured).slice(0, 3);
 const recent = posts.slice(0, 5);
 const series = await getSeries();
+const papers = await getPapers();
+const recentPapers = papers.slice(0, 4);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BaseLayout narrow={true}>
   <section class="hero">
-    <img class="hero__image" src={`${base}/public/img/intro.jpg`} alt={SITE.author.name} width="128" height="128" />
+    <img class="hero__image" src={`${base}/public/logo.png`} alt={SITE.title} width="96" height="96" />
     <h1 class="hero__title">{SITE.title}</h1>
     <p class="hero__tagline">{SITE.tagline}</p>
     <p class="hero__intro">{SITE.author.intro}</p>
     <div class="hero__actions">
-      <a class="btn" href={`${base}/insight/`}>글 둘러보기</a>
-      <a class="btn btn--outline" href={`${base}/about/`}>About</a>
+      <a class="btn" href={`${base}/insight/`}>블로그 글</a>
+      <a class="btn btn--outline" href={`${base}/papers/`}>논문 리뷰</a>
     </div>
   </section>
 
@@ -42,7 +44,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   )}
 
   <section class="home-section">
-    <h2 class="section-title">최근 글</h2>
+    <div class="home-section__head">
+      <h2 class="section-title section-title--inline">최근 블로그 글</h2>
+      <span class="kind-badge kind-badge--post">POST</span>
+    </div>
     <div class="post-list">
       {recent.map((post) => (
         <PostCard
@@ -59,6 +64,31 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <a class="btn btn--outline" href={`${base}/insight/`}>모든 글 보기</a>
     </div>
   </section>
+
+  {recentPapers.length > 0 && (
+    <section class="home-section">
+      <div class="home-section__head">
+        <h2 class="section-title section-title--inline">논문 리뷰</h2>
+        <span class="kind-badge kind-badge--paper">PAPER</span>
+      </div>
+      <p class="home-section__desc">reference 순서로 연결해 정리한 논문 리뷰입니다.</p>
+      <ul class="paper-mini">
+        {recentPapers.map((paper) => (
+          <li class="paper-mini__item">
+            <a class="paper-mini__link" href={paperUrl(paper.id)}>{paper.data.title}</a>
+            <span class="paper-mini__meta">
+              {[paper.data.category, paper.data.subcategory, paper.data.year]
+                .filter(Boolean)
+                .join(' · ')}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div class="home-section__more">
+        <a class="btn btn--outline" href={`${base}/papers/`}>모든 논문 리뷰 보기</a>
+      </div>
+    </section>
+  )}
 
   {series.size > 0 && (
     <section class="home-section">
@@ -81,13 +111,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     padding: 2rem 0 3rem;
   }
   .hero__image {
-    width: 8rem;
-    height: 8rem;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-bottom: 1.5rem;
-    border: 3px solid var(--color-border);
-    box-shadow: var(--shadow-lg);
+    width: 6rem;
+    height: 6rem;
+    object-fit: contain;
+    margin-bottom: 1.25rem;
+  }
+  :global(:root[data-theme='dark']) .hero__image { filter: invert(1); }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .hero__image { filter: invert(1); }
   }
   .hero__title { font-size: 1.75rem; margin-bottom: 0.5rem; }
   @media (min-width: 640px) {
@@ -109,7 +140,51 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     gap: 0.75rem;
   }
   .home-section { margin-top: 3rem; }
+  .home-section__head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+  .section-title--inline { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .home-section__desc {
+    margin: -0.5rem 0 1rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
   .home-section__more { margin-top: 1.5rem; text-align: center; }
+
+  .kind-badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+  }
+  .kind-badge--post { color: var(--color-post-text); background: var(--color-post-bg); }
+  .kind-badge--paper {
+    color: var(--color-paper-line);
+    background: transparent;
+    border: 1px solid var(--color-paper-line);
+  }
+
+  .paper-mini { list-style: none; padding: 0; margin: 0; }
+  .paper-mini__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-paper-line);
+    padding-left: 0.9rem;
+  }
+  .paper-mini__link { font-weight: 600; font-size: 1rem; }
+  .paper-mini__meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+  }
   .series-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

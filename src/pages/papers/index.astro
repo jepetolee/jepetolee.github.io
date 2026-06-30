@@ -1,0 +1,200 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getPaperCategoryTree, getPapers, paperUrl } from '../../utils/posts';
+
+const tree = await getPaperCategoryTree();
+const papers = await getPapers();
+const titleById = new Map(papers.map((p) => [p.id, p.data.title]));
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const totalCount = papers.length;
+const catCount = tree.size;
+---
+
+<BaseLayout title="Paper Reviews" description="논문 리뷰 — reference 순서로 연결된 카테고리별 정리" narrow={true}>
+  <header class="papers-head">
+    <p class="papers-head__kicker">PAPER REVIEWS</p>
+    <h1 class="papers-head__title">논문 리뷰</h1>
+    <p class="papers-head__sub">
+      카테고리 → 세부 주제로 나누고, 각 주제 안에서는 <strong>참고(reference) 순서</strong>대로
+      논문을 연결했습니다. 선행 논문을 먼저 읽고 따라 내려오면 한 흐름으로 이어집니다.
+    </p>
+    <p class="papers-head__stat">{totalCount}편 · {catCount}개 카테고리</p>
+  </header>
+
+  {[...tree.entries()].map(([category, subMap]) => (
+    <section class="cat">
+      <h2 class="cat__title">{category}</h2>
+      {[...subMap.entries()].map(([sub, list]) => (
+        <div class="subcat">
+          <h3 class="subcat__title">
+            <span class="subcat__name">{sub}</span>
+            <span class="subcat__count">{list.length}</span>
+          </h3>
+          <ol class="chain">
+            {list.map((paper, i) => (
+              <li class="chain__node">
+                <span class="chain__index">{i + 1}</span>
+                <div class="chain__card">
+                  <a class="chain__link" href={paperUrl(paper.id)}>{paper.data.title}</a>
+                  <div class="chain__meta">
+                    {paper.data.paper && <span class="chain__paper">{paper.data.paper}</span>}
+                    {paper.data.year && <><span aria-hidden="true">·</span><span>{paper.data.year}</span></>}
+                    <span aria-hidden="true">·</span>
+                    <FormattedDate date={paper.data.date} />
+                  </div>
+                  {paper.data.references.length > 0 && (
+                    <p class="chain__refs">
+                      <span class="chain__refs-label">기반</span>
+                      {paper.data.references.map((refId, idx) => (
+                        <>
+                          {idx > 0 && <span aria-hidden="true">,</span>}
+                          <a href={paperUrl(refId)}>{titleById.get(refId) ?? refId}</a>
+                        </>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+    </section>
+  ))}
+
+  {totalCount === 0 && <p class="empty">아직 등록된 논문 리뷰가 없습니다.</p>}
+</BaseLayout>
+
+<style>
+  .papers-head { margin-bottom: 2.5rem; }
+  .papers-head__kicker {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--color-text-muted);
+    margin: 0 0 0.4rem;
+  }
+  .papers-head__title { font-size: 1.9rem; margin: 0 0 0.6rem; }
+  .papers-head__sub {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0 0 0.6rem;
+    max-width: 38rem;
+  }
+  .papers-head__stat {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .cat { margin-bottom: 2.75rem; }
+  .cat__title {
+    font-size: 1.35rem;
+    margin: 0 0 1rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 2px solid var(--color-text);
+  }
+
+  .subcat { margin: 0 0 1.75rem; }
+  .subcat__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    margin: 0 0 0.85rem;
+  }
+  .subcat__name {
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+  }
+  .subcat__count {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.05rem 0.45rem;
+  }
+
+  /* reference 순서 체인 */
+  .chain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .chain__node {
+    position: relative;
+    display: flex;
+    gap: 0.85rem;
+    padding-bottom: 1rem;
+  }
+  /* 노드를 잇는 세로선 */
+  .chain__node::before {
+    content: '';
+    position: absolute;
+    left: 0.7rem;
+    top: 1.6rem;
+    bottom: -0.1rem;
+    width: 2px;
+    background: var(--color-border);
+  }
+  .chain__node:last-child { padding-bottom: 0; }
+  .chain__node:last-child::before { display: none; }
+  .chain__index {
+    flex-shrink: 0;
+    z-index: 1;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-on-accent);
+    background: var(--color-accent);
+    border-radius: 50%;
+  }
+  .chain__card { flex: 1; min-width: 0; }
+  .chain__link {
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: var(--color-text);
+  }
+  .chain__link:hover { color: var(--color-accent-hover); }
+  .chain__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    margin: 0.25rem 0 0;
+  }
+  .chain__paper { font-style: italic; }
+  .chain__refs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.4rem 0 0;
+    font-size: 0.78rem;
+  }
+  .chain__refs-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.05rem 0.35rem;
+  }
+  .empty { color: var(--color-text-muted); }
+</style>

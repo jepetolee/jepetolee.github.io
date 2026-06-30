@@ -13,7 +13,7 @@ const { title, description = SITE.description, image, article = false } = Astro.
 const pageTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} · ${SITE.tagline}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const ogImage = image ?? `${base}/public/default.jpg`;
+const ogImage = image ?? `${base}/public/image.png`;
 ---
 
 <meta charset="utf-8" />
