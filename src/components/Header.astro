@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import LogoMark from './LogoMark.astro';
 import { SITE, NAV, SOCIAL } from '../config';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -14,7 +15,7 @@ function isActive(href: string) {
 <header class="site-header">
   <div class="site-header__inner container">
     <a class="site-header__brand" href={`${base}/`}>
-      <img class="site-header__logo" src={`${base}/logo.png`} alt={SITE.title} width="30" height="30" />
+      <LogoMark class="site-header__logo" title={SITE.title} />
       <span>{SITE.title}</span>
     </a>
 
@@ -77,12 +78,7 @@ function isActive(href: string) {
   .site-header__logo {
     height: 30px;
     width: 30px;
-    object-fit: contain;
-  }
-  /* Black-on-transparent mark flips to white in dark mode */
-  :global(:root[data-theme='dark']) .site-header__logo { filter: invert(1); }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .site-header__logo { filter: invert(1); }
+    color: var(--color-text);
   }
 
   .site-nav {
