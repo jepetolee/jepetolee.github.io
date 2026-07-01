@@ -1,29 +1,73 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { CANONICAL_TAG_NAMES, compareTags } from '../taxonomy';
+import { DEFAULT_LOCALE, isLocale, type Locale } from '../i18n/config';
+import { localizedPath } from '../i18n/utils';
 
-export async function getPublishedPosts(): Promise<CollectionEntry<'posts'>[]> {
-  const posts = await getCollection('posts', ({ data }) => !data.draft);
-  return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
-}
-
+export type Post = CollectionEntry<'posts'>;
 export type Paper = CollectionEntry<'papers'>;
 
-export async function getPapers(): Promise<Paper[]> {
-  const papers = await getCollection('papers', ({ data }) => !data.draft);
-  return papers.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+/** Split a collection entry id ("<locale>/<slug>") into its locale and slug. */
+export function parseId(id: string): { locale: Locale; slug: string } {
+  const [maybeLocale, ...rest] = id.split('/');
+  if (rest.length > 0 && isLocale(maybeLocale)) {
+    return { locale: maybeLocale, slug: rest.join('/') };
+  }
+  return { locale: DEFAULT_LOCALE, slug: id };
+}
+
+/** The locale-agnostic slug (translation key) of an entry. */
+export function slugOf(entry: { id: string }): string {
+  return parseId(entry.id).slug;
+}
+
+/**
+ * Pick one entry per slug for the requested locale, falling back to the
+ * default locale (then any available locale) when a translation is missing.
+ */
+function resolveByLocale<T extends { id: string }>(entries: T[], locale: Locale): T[] {
+  const bySlug = new Map<string, Map<Locale, T>>();
+  for (const entry of entries) {
+    const { locale: entryLocale, slug } = parseId(entry.id);
+    if (!bySlug.has(slug)) bySlug.set(slug, new Map());
+    bySlug.get(slug)!.set(entryLocale, entry);
+  }
+  const result: T[] = [];
+  for (const byLocale of bySlug.values()) {
+    const entry =
+      byLocale.get(locale) ?? byLocale.get(DEFAULT_LOCALE) ?? [...byLocale.values()][0];
+    if (entry) result.push(entry);
+  }
+  return result;
+}
+
+export async function getPublishedPosts(locale: Locale): Promise<Post[]> {
+  const all = await getCollection('posts', ({ data }) => !data.draft);
+  return resolveByLocale(all, locale).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  );
+}
+
+export async function getPapers(locale: Locale): Promise<Paper[]> {
+  const all = await getCollection('papers', ({ data }) => !data.draft);
+  return resolveByLocale(all, locale).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  );
 }
 
 /**
  * reference 순서대로 정렬: 어떤 리뷰가 참고한 선행 논문이 항상 앞에 오도록 위상 정렬.
+ * references는 로케일 무관 slug로 해석한다.
  */
 export function sortByReferenceOrder(papers: Paper[]): Paper[] {
-  const byId = new Map(papers.map((p) => [p.id, p]));
+  const bySlug = new Map(papers.map((p) => [slugOf(p), p]));
   const visited = new Set<string>();
   const result: Paper[] = [];
   const visit = (p: Paper) => {
-    if (visited.has(p.id)) return;
-    visited.add(p.id);
-    for (const refId of p.data.references) {
-      const ref = byId.get(refId);
+    const slug = slugOf(p);
+    if (visited.has(slug)) return;
+    visited.add(slug);
+    for (const refSlug of p.data.references) {
+      const ref = bySlug.get(refSlug);
       if (ref) visit(ref);
     }
     result.push(p);
@@ -36,10 +80,10 @@ export function sortByReferenceOrder(papers: Paper[]): Paper[] {
 /**
  * 카테고리 세부항목화: 대분류 -> 소분류 -> (reference 순서로 정렬된) 리뷰 목록
  */
-export async function getPaperCategoryTree(): Promise<
-  Map<string, Map<string, Paper[]>>
-> {
-  const papers = await getPapers();
+export async function getPaperCategoryTree(
+  locale: Locale,
+): Promise<Map<string, Map<string, Paper[]>>> {
+  const papers = await getPapers(locale);
   const ordered = sortByReferenceOrder(papers);
   const tree = new Map<string, Map<string, Paper[]>>();
   for (const paper of ordered) {
@@ -53,18 +97,21 @@ export async function getPaperCategoryTree(): Promise<
   return tree;
 }
 
-/** 이 리뷰가 참고한 선행 논문 리뷰들 (reference 순서 유지) */
-export async function getPaperReferences(paper: Paper): Promise<Paper[]> {
-  const papers = await getPapers();
-  const byId = new Map(papers.map((p) => [p.id, p]));
-  return paper.data.references.map((id) => byId.get(id)).filter((p): p is Paper => !!p);
+/** 이 리뷰가 참고한 선행 논문 리뷰들 (reference 순서 유지, 현재 로케일 폴백) */
+export async function getPaperReferences(paper: Paper, locale: Locale): Promise<Paper[]> {
+  const papers = await getPapers(locale);
+  const bySlug = new Map(papers.map((p) => [slugOf(p), p]));
+  return paper.data.references
+    .map((slug) => bySlug.get(slug))
+    .filter((p): p is Paper => !!p);
 }
 
 /** 이 논문 리뷰를 참고한(인용한) 후속 리뷰들 */
-export async function getPapersCiting(paper: Paper): Promise<Paper[]> {
-  const papers = await getPapers();
+export async function getPapersCiting(paper: Paper, locale: Locale): Promise<Paper[]> {
+  const papers = await getPapers(locale);
+  const slug = slugOf(paper);
   return papers
-    .filter((p) => p.data.references.includes(paper.id))
+    .filter((p) => p.data.references.includes(slug))
     .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
 }
 
@@ -77,20 +124,23 @@ export function readingTime(body: string | undefined): number {
   return Math.max(1, minutes);
 }
 
-export function postUrl(id: string): string {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  return `${base}/insight/${id}/`;
+export function postUrl(locale: Locale, slug: string): string {
+  return localizedPath(locale, `insight/${slug}`);
 }
 
-export function paperUrl(id: string): string {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  return `${base}/papers/${id}/`;
+export function paperUrl(locale: Locale, slug: string): string {
+  return localizedPath(locale, `papers/${slug}`);
 }
 
-export async function getAllTags(): Promise<{ tag: string; count: number }[]> {
-  const posts = await getPublishedPosts();
-  const papers = await getPapers();
+export async function getAllTags(
+  locale: Locale,
+): Promise<{ tag: string; count: number }[]> {
+  const posts = await getPublishedPosts(locale);
+  const papers = await getPapers(locale);
   const counts = new Map<string, number>();
+  for (const tag of CANONICAL_TAG_NAMES) {
+    counts.set(tag, 0);
+  }
   for (const post of posts) {
     for (const tag of post.data.tags) {
       counts.set(tag, (counts.get(tag) || 0) + 1);
@@ -103,12 +153,12 @@ export async function getAllTags(): Promise<{ tag: string; count: number }[]> {
   }
   return [...counts.entries()]
     .map(([tag, count]) => ({ tag, count }))
-    .sort((a, b) => b.count - a.count);
+    .sort((a, b) => compareTags(a.tag, b.tag) || b.count - a.count);
 }
 
-export async function getSeries(): Promise<Map<string, CollectionEntry<'posts'>[]>> {
-  const posts = await getPublishedPosts();
-  const series = new Map<string, CollectionEntry<'posts'>[]>();
+export async function getSeries(locale: Locale): Promise<Map<string, Post[]>> {
+  const posts = await getPublishedPosts(locale);
+  const series = new Map<string, Post[]>();
   for (const post of posts) {
     if (post.data.series) {
       const list = series.get(post.data.series) || [];

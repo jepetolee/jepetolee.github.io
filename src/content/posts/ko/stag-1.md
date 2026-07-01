@@ -2,7 +2,7 @@
 title: STAG 프로젝트의 개요
 date: 2022-08-05
 category: Developing Report
-tags: ["STAG", "강화학습", "프로젝트"]
+tags: ["강화학습", "인공신경망", "머신 러닝", "STAG", "프로젝트"]
 series: STAG
 featured: true
 description: 인공신경망 기반 강화학습 자동투자기 STAG의 첫 개발 기록. 이전 프로젝트의 실패 원인을 코드와 알고리즘 관점에서 분석한다.

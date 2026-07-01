@@ -1,0 +1,285 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getPublishedPosts, getPapers, getAllTags, postUrl, paperUrl, slugOf } from '../../../utils/posts';
+import { getStandardTagMetadata, getTopicTag } from '../../../taxonomy';
+import { LOCALES } from '../../../i18n/config';
+import { localizedPath } from '../../../i18n/utils';
+import { useTranslations } from '../../../i18n/ui';
+
+export const getStaticPaths = (async () => {
+  const routes = [];
+  for (const locale of LOCALES) {
+    const tags = await getAllTags(locale);
+    const posts = await getPublishedPosts(locale);
+    const papers = await getPapers(locale);
+    for (const { tag } of tags) {
+      routes.push({
+        params: { locale, tag },
+        props: {
+          locale,
+          tag,
+          posts: posts.filter((p) => p.data.tags.includes(tag)),
+          papers: papers.filter((p) => p.data.tags.includes(tag)),
+        },
+      });
+    }
+  }
+  return routes;
+}) satisfies GetStaticPaths;
+
+const { tag, posts, papers, locale } = Astro.props;
+const t = useTranslations(locale);
+const total = posts.length + papers.length;
+const topic = getTopicTag(tag);
+const standardTag = getStandardTagMetadata(tag);
+
+type TimelineItem = { kind: 'PAPER' | 'POST'; year: number; title: string; url: string; meta: string };
+const timelineItems: TimelineItem[] = [
+  ...papers.map((paper) => ({
+    kind: 'PAPER' as const,
+    year: paper.data.year ?? paper.data.date.getFullYear(),
+    title: paper.data.title,
+    url: paperUrl(locale, slugOf(paper)),
+    meta: [paper.data.paper, paper.data.venue].filter(Boolean).join(' · '),
+  })),
+  ...posts.map((post) => ({
+    kind: 'POST' as const,
+    year: post.data.date.getFullYear(),
+    title: post.data.title,
+    url: postUrl(locale, slugOf(post)),
+    meta: post.data.category ?? '',
+  })),
+].sort((a, b) => b.year - a.year || a.title.localeCompare(b.title, 'ko'));
+
+const timelineByYear = Array.from(
+  timelineItems
+    .reduce((map, item) => {
+      const list = map.get(item.year) ?? [];
+      list.push(item);
+      map.set(item.year, list);
+      return map;
+    }, new Map<number, TimelineItem[]>())
+    .entries(),
+).sort(([a], [b]) => b - a);
+
+const countLine = t('tag.countLine', { posts: posts.length, papers: papers.length, total });
+---
+
+<BaseLayout title={`#${tag}`} description={`${tag} · ${countLine}`} narrow={true} locale={locale}>
+  <h1 class="page-title">#{tag}</h1>
+  <p class="page-sub">
+    {topic?.description ?? standardTag?.description ?? countLine}
+    {(topic || standardTag) && <span class="page-sub__count">{countLine}</span>}
+  </p>
+
+  {standardTag && (
+    <section class="tag-profile" aria-label={tag}>
+      <div class="tag-profile__top">
+        <span class="tag-profile__kind">{standardTag.kind === 'conference' ? t('tag.kindConference') : t('tag.kindOrganization')}</span>
+        <span class="tag-profile__count">{t('tag.items', { count: total })}</span>
+      </div>
+      <h2 class="tag-profile__title">{t('tag.representative')}</h2>
+      <div class="researcher-list">
+        {standardTag.representativeResearchers.map((researcher) => (
+          <span class="researcher-list__item">{researcher}</span>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {standardTag && timelineByYear.length > 0 && (
+    <section class="year-archive" aria-labelledby="year-archive-title">
+      <h2 id="year-archive-title" class="tag-group__title">{t('tag.yearArchive')}</h2>
+      <div class="year-archive__list">
+        {timelineByYear.map(([year, items]) => (
+          <section class="year-block" aria-label={String(year)}>
+            <h3 class="year-block__year">{year}</h3>
+            <ol class="year-block__items">
+              {items.map((item) => (
+                <li class="year-block__item">
+                  <span class:list={['kind-badge', item.kind === 'PAPER' ? 'kind-badge--paper' : 'kind-badge--post']}>{item.kind}</span>
+                  <div class="year-block__body">
+                    <a class="year-block__link" href={item.url}>{item.title}</a>
+                    {item.meta && <p class="year-block__meta">{item.meta}</p>}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {posts.length > 0 && (
+    <section class="tag-group">
+      <div class="tag-group__head">
+        <span class="kind-badge kind-badge--post">POST</span>
+        <h2 class="tag-group__title">{t('tag.blogPosts')}</h2>
+      </div>
+      <div class="post-list">
+        {posts.map((post) => (
+          <PostCard
+            kind="post"
+            url={postUrl(locale, slugOf(post))}
+            title={post.data.title}
+            date={post.data.date}
+            tags={post.data.tags}
+            description={post.data.description}
+            category={post.data.category}
+            locale={locale}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {papers.length > 0 && (
+    <section class="tag-group">
+      <div class="tag-group__head">
+        <span class="kind-badge kind-badge--paper">PAPER</span>
+        <h2 class="tag-group__title">{t('tag.paperReviews')}</h2>
+      </div>
+      <div class="post-list">
+        {papers.map((paper) => (
+          <PostCard
+            kind="paper"
+            url={paperUrl(locale, slugOf(paper))}
+            title={paper.data.title}
+            date={paper.data.date}
+            tags={paper.data.tags}
+            description={paper.data.description}
+            category={[paper.data.category, paper.data.subcategory].filter(Boolean).join(' · ')}
+            locale={locale}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {total === 0 && (
+    <p class="empty" set:html={t('tag.empty', { tag: `<code>${tag}</code>` })} />
+  )}
+</BaseLayout>
+
+<style>
+  .page-title { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .page-sub { color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 2rem; }
+  .page-sub__count { display: block; margin-top: 0.35rem; font-family: var(--font-mono); font-size: 0.75rem; }
+  .tag-profile {
+    margin-bottom: 2rem;
+    padding: 1rem 1.1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .tag-profile__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.08em;
+  }
+  .tag-profile__title {
+    font-size: 1rem;
+    margin: 0 0 0.65rem;
+  }
+  .researcher-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .researcher-list__item {
+    display: inline-flex;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+  .year-archive {
+    margin-bottom: 2.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .year-archive__list { margin-top: 1rem; }
+  .year-block {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .year-block__year {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+  .year-block__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .year-block__item {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+  }
+  .year-block__body { min-width: 0; }
+  .year-block__link {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  .year-block__link:hover { color: var(--color-accent); }
+  .year-block__meta {
+    margin: 0.15rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+  }
+  .tag-group { margin-bottom: 2.5rem; }
+  .tag-group__head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .tag-group__title { font-size: 1.15rem; margin: 0; }
+  .kind-badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+  }
+  .kind-badge--post { color: var(--color-post-text); background: var(--color-post-bg); }
+  .kind-badge--paper {
+    color: var(--color-paper-line);
+    background: transparent;
+    border: 1px solid var(--color-paper-line);
+  }
+  .empty {
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+  }
+  .empty :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--color-code-bg);
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+  }
+</style>

@@ -1,15 +1,19 @@
 ---
 import type { MarkdownHeading } from 'astro';
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
 
 interface Props {
   headings: MarkdownHeading[];
+  locale?: Locale;
 }
-const { headings } = Astro.props;
+const { headings, locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 {toc.length > 0 && (
-  <nav class="toc" aria-label="Table of contents">
-    <p class="toc__title">목차</p>
+  <nav class="toc" aria-label={t('toc.title')}>
+    <p class="toc__title">{t('toc.title')}</p>
     <ul class="toc__list">
       {toc.map((h) => (
         <li class:list={['toc__item', { 'toc__item--sub': h.depth === 3 }]}>

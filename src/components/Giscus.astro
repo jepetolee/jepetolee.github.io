@@ -1,11 +1,20 @@
 ---
 import { SITE } from '../config';
+import { DEFAULT_LOCALE, LOCALE_META, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
 const { giscus } = SITE;
 const enabled = giscus.repoId && giscus.categoryId;
+const giscusLang = LOCALE_META[locale].giscus;
 ---
 {enabled ? (
   <section class="comments">
-    <h2 class="comments__title">Comments</h2>
+    <h2 class="comments__title">{t('comments.title')}</h2>
     <script
       src="https://giscus.app/client.js"
       data-repo={giscus.repo}
@@ -18,14 +27,14 @@ const enabled = giscus.repoId && giscus.categoryId;
       data-emit-metadata="0"
       data-input-position="bottom"
       data-theme="preferred_color_scheme"
-      data-lang="ko"
+      data-lang={giscusLang}
       crossorigin="anonymous"
       async
     ></script>
   </section>
 ) : (
   <section class="comments">
-    <h2 class="comments__title">Comments</h2>
+    <h2 class="comments__title">{t('comments.title')}</h2>
     <p class="comments__hint">
       댓글을 활성화하려면 GitHub 저장소에 Discussions를 켜고 giscus 앱을 설치한 뒤
       <code>src/config.ts</code>의 <code>giscus.repoId</code>와 <code>categoryId</code>를 채워주세요.

@@ -8,59 +8,63 @@ import TableOfContents from '../components/TableOfContents.astro';
 import Giscus from '../components/Giscus.astro';
 import Icon from '../components/Icon.astro';
 import PostCard from '../components/PostCard.astro';
-import { readingTime, postUrl, getSeries } from '../utils/posts';
+import { readingTime, postUrl, getSeries, slugOf } from '../utils/posts';
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+import { localizedPath } from '../i18n/utils';
+import { useTranslations } from '../i18n/ui';
 
 interface Props {
   post: CollectionEntry<'posts'>;
   headings: MarkdownHeading[];
+  locale?: Locale;
 }
 
-const { post, headings } = Astro.props;
+const { post, headings, locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
 const { title, date, tags, category, tldr, prerequisites, series } = post.data;
 const minutes = readingTime(post.body);
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 let seriesPosts: CollectionEntry<'posts'>[] = [];
 if (series) {
-  const all = await getSeries();
+  const all = await getSeries(locale);
   seriesPosts = all.get(series) ?? [];
 }
-const related = seriesPosts.filter((p) => p.id !== post.id).slice(0, 3);
+const related = seriesPosts.filter((p) => slugOf(p) !== slugOf(post)).slice(0, 3);
 ---
 
-<BaseLayout title={title} description={post.data.description} article={true} narrow={true}>
+<BaseLayout title={title} description={post.data.description} article={true} narrow={true} locale={locale}>
   <article class="post-article" data-pagefind-body>
     <header class="post-article__header">
       <span class="kind-badge kind-badge--post">POST</span>
       <h1 class="post-article__title">{title}</h1>
       <div class="post-article__meta">
-        <FormattedDate date={date} />
+        <FormattedDate date={date} locale={locale} />
         <span aria-hidden="true">·</span>
-        <span class="post-article__reading"><Icon name="clock" /> {minutes}분 읽기</span>
+        <span class="post-article__reading"><Icon name="clock" /> {t('post.readingTime', { count: minutes })}</span>
         {category && <><span aria-hidden="true">·</span><span>{category}</span></>}
       </div>
       {tags.length > 0 && (
         <div class="post-article__tags">
           {tags.map((tag) => (
-            <a class="post-tag" href={`${base}/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+            <a class="post-tag" href={localizedPath(locale, `tags/${encodeURIComponent(tag)}`)}>{tag}</a>
           ))}
         </div>
       )}
     </header>
 
     {tldr && tldr.length > 0 && (
-      <Callout type="tldr">
+      <Callout type="tldr" locale={locale}>
         <ul>{tldr.map((item) => <li>{item}</li>)}</ul>
       </Callout>
     )}
 
     {prerequisites && prerequisites.length > 0 && (
-      <Callout type="prereq">
+      <Callout type="prereq" locale={locale}>
         <ul>{prerequisites.map((item) => <li set:html={item} />)}</ul>
       </Callout>
     )}
 
-    <TableOfContents headings={headings} />
+    <TableOfContents headings={headings} locale={locale} />
 
     <div class="post-article__body prose">
       <slot />
@@ -69,21 +73,22 @@ const related = seriesPosts.filter((p) => p.id !== post.id).slice(0, 3);
 
   {related.length > 0 && (
     <section class="series-related">
-      <h2 class="section-title">{series} 시리즈의 다른 글</h2>
+      <h2 class="section-title">{t('post.seriesOther', { series: series ?? '' })}</h2>
       {related.map((p) => (
         <PostCard
-          url={postUrl(p.id)}
+          url={postUrl(locale, slugOf(p))}
           title={p.data.title}
           date={p.data.date}
           tags={p.data.tags}
           description={p.data.description}
           category={p.data.category}
+          locale={locale}
         />
       ))}
     </section>
   )}
 
-  <Giscus />
+  <Giscus locale={locale} />
 </BaseLayout>
 
 <style>

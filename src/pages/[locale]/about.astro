@@ -1,28 +1,32 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { SOCIAL } from '../config';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SOCIAL } from '../../config';
+import { LOCALES } from '../../i18n/config';
+import { useTranslations } from '../../i18n/ui';
+
+export const getStaticPaths = (() =>
+  LOCALES.map((locale) => ({ params: { locale }, props: { locale } }))) satisfies GetStaticPaths;
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 ---
 
-<BaseLayout title="About" description="블로그와 저자 소개" narrow={true}>
-  <h1 class="page-title">About</h1>
+<BaseLayout title={t('about.title')} description={t('site.description')} narrow={true} locale={locale}>
+  <h1 class="page-title">{t('about.title')}</h1>
 
   <div class="about-meta">
-    <p>블로그 게시자: 이재석</p>
-    <p class="about-meta__label">관심분야</p>
+    <p>{t('about.authorLabel')}: 이재석</p>
+    <p class="about-meta__label">{t('about.interestsLabel')}</p>
     <p class="about-interests">Machine Learning, Data Science, NeuroScience, Mathematics for Computer Science</p>
     <p>
-      연락처:
+      {t('about.contactLabel')}:
       <a href={SOCIAL.github}>GitHub</a> ·
       <a href={SOCIAL.linkedin}>LinkedIn</a> ·
       <a href={SOCIAL.email}>Email</a>
     </p>
-    <p>각 글 하단에 댓글을 남길 수 있습니다.</p>
+    <p>{t('about.comments')}</p>
   </div>
-
-  <div class="prose">
-    <h2>머릿말</h2>
-
-   </div>
 </BaseLayout>
 
 <style>

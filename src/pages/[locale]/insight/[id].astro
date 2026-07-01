@@ -1,0 +1,25 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import PostLayout from '../../../layouts/PostLayout.astro';
+import { getPublishedPosts, slugOf } from '../../../utils/posts';
+import { LOCALES } from '../../../i18n/config';
+
+export const getStaticPaths = (async () => {
+  const routes = [];
+  for (const locale of LOCALES) {
+    const posts = await getPublishedPosts(locale);
+    for (const post of posts) {
+      routes.push({ params: { locale, id: slugOf(post) }, props: { locale, post } });
+    }
+  }
+  return routes;
+}) satisfies GetStaticPaths;
+
+const { post, locale } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<PostLayout post={post} headings={headings} locale={locale}>
+  <Content />
+</PostLayout>

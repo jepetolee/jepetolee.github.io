@@ -1,35 +1,45 @@
 ---
 import { render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import Giscus from '../../components/Giscus.astro';
-import Icon from '../../components/Icon.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import Giscus from '../../../components/Giscus.astro';
+import Icon from '../../../components/Icon.astro';
 import {
   getPapers,
   getPaperReferences,
   getPapersCiting,
   paperUrl,
-} from '../../utils/posts';
+  slugOf,
+} from '../../../utils/posts';
+import { LOCALES } from '../../../i18n/config';
+import { localizedPath } from '../../../i18n/utils';
+import { useTranslations } from '../../../i18n/ui';
 
 export const getStaticPaths = (async () => {
-  const papers = await getPapers();
-  return papers.map((paper) => ({ params: { id: paper.id }, props: { paper } }));
+  const routes = [];
+  for (const locale of LOCALES) {
+    const papers = await getPapers(locale);
+    for (const paper of papers) {
+      routes.push({ params: { locale, id: slugOf(paper) }, props: { locale, paper } });
+    }
+  }
+  return routes;
 }) satisfies GetStaticPaths;
 
-const { paper } = Astro.props;
+const { paper, locale } = Astro.props;
+const t = useTranslations(locale);
 const { Content } = await render(paper);
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-const references = await getPaperReferences(paper);
-const citedBy = await getPapersCiting(paper);
+const references = await getPaperReferences(paper, locale);
+const citedBy = await getPapersCiting(paper, locale);
 const d = paper.data;
 ---
 
-<BaseLayout title={d.title} description={d.description} article={true} narrow={true}>
+<BaseLayout title={d.title} description={d.description} article={true} narrow={true} locale={locale}>
   <article class="paper" data-pagefind-body>
     <nav class="paper__crumbs" aria-label="Breadcrumb">
-      <a href={`${base}/papers/`}>논문 리뷰</a>
+      <a href={localizedPath(locale, '/papers/')}>{t('paper.crumbRoot')}</a>
       <span aria-hidden="true">/</span>
       <span>{d.category}</span>
       {d.subcategory && <><span aria-hidden="true">/</span><span>{d.subcategory}</span></>}
@@ -51,11 +61,11 @@ const d = paper.data;
         </div>
       )}
       <div class="paper__meta">
-        <FormattedDate date={d.date} />
+        <FormattedDate date={d.date} locale={locale} />
         {d.tags.length > 0 && (
           <div class="paper__tags">
             {d.tags.map((tag) => (
-              <a class="post-tag" href={`${base}/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+              <a class="post-tag" href={localizedPath(locale, `tags/${encodeURIComponent(tag)}`)}>{tag}</a>
             ))}
           </div>
         )}
@@ -63,13 +73,13 @@ const d = paper.data;
     </header>
 
     {references.length > 0 && (
-      <aside class="ref-chain" aria-label="참고한 논문">
-        <p class="ref-chain__label">먼저 읽으면 좋은 선행 리뷰</p>
+      <aside class="ref-chain" aria-label={t('paper.prereq')}>
+        <p class="ref-chain__label">{t('paper.prereq')}</p>
         <ol class="ref-chain__list">
           {references.map((ref, i) => (
             <li>
               <span class="ref-chain__num">{i + 1}</span>
-              <a href={paperUrl(ref.id)}>{ref.data.title}</a>
+              <a href={paperUrl(locale, slugOf(ref))}>{ref.data.title}</a>
             </li>
           ))}
         </ol>
@@ -81,11 +91,11 @@ const d = paper.data;
     </div>
 
     {citedBy.length > 0 && (
-      <aside class="cited-by" aria-label="이 리뷰를 참고한 후속 리뷰">
-        <p class="cited-by__label">이 논문을 기반으로 한 후속 리뷰</p>
+      <aside class="cited-by" aria-label={t('paper.citedBy')}>
+        <p class="cited-by__label">{t('paper.citedBy')}</p>
         <div class="cited-by__grid">
           {citedBy.map((next) => (
-            <a class="cited-by__card" href={paperUrl(next.id)}>
+            <a class="cited-by__card" href={paperUrl(locale, slugOf(next))}>
               <span class="cited-by__title">{next.data.title}</span>
               <Icon name="arrow-right" />
             </a>
@@ -94,7 +104,7 @@ const d = paper.data;
       </aside>
     )}
   </article>
-  <Giscus />
+  <Giscus locale={locale} />
 </BaseLayout>
 
 <style>

@@ -3,7 +3,7 @@ title: "DreamerV2: 이산 잠재로 Atari를 정복하다"
 date: 2022-10-25
 category: 강화학습
 subcategory: World Models
-tags: ["강화학습", "Dreamer", "World Model", "Atari"]
+tags: ["강화학습", "월드 모델", "인공신경망", "ICLR", "Google DeepMind", "Dreamer", "World Model", "Atari"]
 paper: "Mastering Atari with Discrete World Models"
 paperUrl: "https://arxiv.org/abs/2010.02193"
 authors: "Danijar Hafner et al."

@@ -1,31 +1,42 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LOCALES } from '../../i18n/config';
+import { useTranslations } from '../../i18n/ui';
+
+export const getStaticPaths = (() =>
+  LOCALES.map((locale) => ({ params: { locale }, props: { locale } }))) satisfies GetStaticPaths;
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pagefindTranslations = {
+  placeholder: t('search.placeholder'),
+  zero_results: t('search.zeroResults'),
+};
+const searchHint = t('search.hint');
 ---
 
-<BaseLayout title="Search" description="블로그 글 검색" narrow={true}>
-  <h1 class="page-title">Search</h1>
-  <p class="page-sub">제목과 본문에서 검색합니다.</p>
+<BaseLayout title={t('search.title')} description={t('search.sub')} narrow={true} locale={locale}>
+  <h1 class="page-title">{t('search.title')}</h1>
+  <p class="page-sub">{t('search.sub')}</p>
 
   <div id="search"></div>
 
   <link rel="stylesheet" href={`${base}/pagefind/pagefind-ui.css`} />
   <script is:inline src={`${base}/pagefind/pagefind-ui.js`}></script>
-  <script is:inline define:vars={{ base }}>
+  <script is:inline define:vars={{ pagefindTranslations, searchHint }}>
     window.addEventListener('DOMContentLoaded', () => {
       if (typeof PagefindUI !== 'undefined') {
         new PagefindUI({
           element: '#search',
           showSubResults: true,
           showImages: false,
-          translations: {
-            placeholder: '검색어를 입력하세요',
-            zero_results: '"[SEARCH_TERM]"에 대한 결과가 없습니다',
-          },
+          translations: pagefindTranslations,
         });
       } else {
         document.getElementById('search').innerHTML =
-          '<p class="search-hint">검색 인덱스는 <code>npm run build</code> 후 생성됩니다. 로컬 <code>dev</code> 모드에서는 동작하지 않을 수 있습니다.</p>';
+          '<p class="search-hint">' + searchHint + '</p>';
       }
     });
   </script>

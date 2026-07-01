@@ -3,7 +3,7 @@ title: "PlaNet: 잠재 공간에서 계획하기"
 date: 2022-09-27
 category: 강화학습
 subcategory: World Models
-tags: ["강화학습", "World Model", "RSSM", "Planning"]
+tags: ["강화학습", "월드 모델", "ICML", "Google DeepMind", "World Model", "RSSM", "Planning"]
 paper: "Learning Latent Dynamics for Planning from Pixels (PlaNet)"
 paperUrl: "https://arxiv.org/abs/1811.04551"
 authors: "Danijar Hafner et al."

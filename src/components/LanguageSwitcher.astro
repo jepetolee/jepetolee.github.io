@@ -1,0 +1,126 @@
+---
+import Icon from './Icon.astro';
+import { DEFAULT_LOCALE, LOCALE_META, LOCALES, type Locale } from '../i18n/config';
+import { switchLocalePath } from '../i18n/utils';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
+const pathname = Astro.url.pathname;
+const options = LOCALES.map((l) => ({
+  code: l,
+  label: LOCALE_META[l].label,
+  href: switchLocalePath(pathname, l),
+  current: l === locale,
+}));
+---
+
+<div class="lang-switcher">
+  <button
+    type="button"
+    class="icon-btn lang-switcher__toggle"
+    id="lang-toggle"
+    aria-label={t('langSwitcher.label')}
+    aria-haspopup="true"
+    aria-expanded="false"
+  >
+    <Icon name="globe" />
+    <span class="lang-switcher__current">{LOCALE_META[locale].label}</span>
+  </button>
+  <ul class="lang-switcher__menu" role="menu" aria-label={t('langSwitcher.label')}>
+    {options.map((o) => (
+      <li role="none">
+        <a
+          role="menuitem"
+          class:list={['lang-switcher__link', { 'is-active': o.current }]}
+          href={o.href}
+          hreflang={LOCALE_META[o.code].htmlLang}
+          lang={LOCALE_META[o.code].htmlLang}
+          aria-current={o.current ? 'true' : undefined}
+        >
+          {o.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .lang-switcher {
+    position: relative;
+  }
+  .lang-switcher__toggle {
+    width: auto;
+    gap: 0.35rem;
+    padding: 0 0.6rem;
+  }
+  .lang-switcher__current {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  @media (max-width: 520px) {
+    .lang-switcher__current { display: none; }
+    .lang-switcher__toggle { width: 2.25rem; padding: 0; }
+  }
+  .lang-switcher__menu {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    z-index: 300;
+    min-width: 9rem;
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+  }
+  .lang-switcher:hover .lang-switcher__menu,
+  .lang-switcher:focus-within .lang-switcher__menu,
+  .lang-switcher.is-open .lang-switcher__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .lang-switcher__link {
+    display: block;
+    padding: 0.45rem 0.6rem;
+    border-radius: calc(var(--radius) - 2px);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .lang-switcher__link:hover,
+  .lang-switcher__link:focus {
+    background: var(--color-tag-bg);
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .lang-switcher__link.is-active {
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('lang-toggle');
+  const wrap = toggle?.closest('.lang-switcher');
+  toggle?.addEventListener('click', () => {
+    const open = wrap?.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', (e) => {
+    if (wrap && !wrap.contains(e.target as Node)) {
+      wrap.classList.remove('is-open');
+      toggle?.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>

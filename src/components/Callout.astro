@@ -1,14 +1,19 @@
 ---
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+
 interface Props {
   type?: 'tldr' | 'prereq' | 'pitfall' | 'note';
   title?: string;
+  locale?: Locale;
 }
-const { type = 'note', title } = Astro.props;
+const { type = 'note', title, locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
 const labels: Record<string, string> = {
-  tldr: 'TL;DR',
-  prereq: '사전 지식',
-  pitfall: '주의 / 삽질 노트',
-  note: 'Note',
+  tldr: t('callout.tldr'),
+  prereq: t('callout.prereq'),
+  pitfall: t('callout.pitfall'),
+  note: t('callout.note'),
 };
 const heading = title ?? labels[type];
 ---

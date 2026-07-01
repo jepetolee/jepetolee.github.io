@@ -1,17 +1,17 @@
 ---
-title: STAG 프로젝트 진행 현황, 추후 계획 (ICRL)
+title: STAG 프로젝트 진행 현황, 추후 계획
 date: 2022-10-10
-category: Competition papers
-tags: ["RSSM", "강화학습", "Dreamer", "PyTorch"]
+category: Developing Report
+tags: ["강화학습", "월드 모델", "인공신경망", "라이브러리", "STAG", "Dreamer", "PyTorch"]
 series: STAG
-description: RSSM 기반 Dreamer 모델을 코인 트레이딩 강화학습에 적용하고, TDD로 핵심 모듈을 검증한 STAG 프로젝트의 진행 기록.
+description: 클린 코드 적용, 강화학습 보상 환경 재설계, Dreamer 모델 도입, TDD 기반 테스트 코드 작성 등 STAG 프로젝트 2개월간의 진행 상황.
 tldr:
-  - 강화학습 보상 환경을 재설계하고 Dreamer(RSSM) 모델을 도입했다.
-  - PyTorch 기반으로 의존성을 분리하고 추상화 계층을 도입했다.
-  - TDD 기반 테스트 코드로 핵심 모듈을 검증했다.
+  - 클린 코드/아키텍처 적용으로 코드 접근법을 재정립했다.
+  - 손절/익절 조작 환경을 추가하고 Dreamer 모델을 도입했다.
+  - TDD로 TradeManager, CsvModify 등 핵심 모듈을 검증했다.
 prerequisites:
-  - 강화학습과 RSSM(Recurrent State Space Model)에 대한 기본 이해
-  - PyTorch에 대한 친숙함
+  - "[STAG 프로젝트의 개요](/insight/stag-1/) 사전 읽기 권장"
+  - 강화학습 보상 설계와 PPO/Dreamer에 대한 이해
 ---
 
 ## 2달간의 여정
@@ -109,3 +109,5 @@ def test():
 아직까지 포트폴리오 작성에 대한 방식을 유보해둔 상황이나, 머지않아 txt 파일이나 csv 파일 두가지 중 하나의 방법을 채택할 것이다.
 
 아직까지 프로젝트가 완벽하게 구현되지 않았고 수능이 머지않아 다가오는 입장에서 일단은 개발 속도를 늦출 수 밖에 없어 아쉬울 따름이다.
+
+

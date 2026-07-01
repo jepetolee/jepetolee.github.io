@@ -4,7 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Analytics from '../components/Analytics.astro';
 import Icon from '../components/Icon.astro';
-import { SITE } from '../config';
+import { DEFAULT_LOCALE, LOCALE_META, type Locale } from '../i18n/config';
 
 interface Props {
   title?: string;
@@ -12,19 +12,22 @@ interface Props {
   image?: string;
   article?: boolean;
   narrow?: boolean;
+  locale?: Locale;
 }
 
-const { title, description, image, article = false, narrow = false } = Astro.props;
+const { title, description, image, article = false, narrow = false, locale = DEFAULT_LOCALE } =
+  Astro.props;
+const meta = LOCALE_META[locale];
 ---
 
 <!doctype html>
-<html lang={SITE.lang}>
+<html lang={meta.htmlLang} dir={meta.dir}>
   <head>
-    <BaseHead title={title} description={description} image={image} article={article} />
+    <BaseHead title={title} description={description} image={image} article={article} locale={locale} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header />
+    <Header locale={locale} />
     <main class="site-main" id="main">
       <div class:list={['container', { 'container--narrow': narrow }]}>
         <slot />

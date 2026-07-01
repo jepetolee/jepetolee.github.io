@@ -1,27 +1,39 @@
 ---
 import Icon from './Icon.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 import { SITE, NAV, SOCIAL } from '../config';
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+import { localizedPath } from '../i18n/utils';
+import { useTranslations } from '../i18n/ui';
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const path = Astro.url.pathname.replace(base, '') || '/';
+interface Props {
+  locale?: Locale;
+}
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
+const path = Astro.url.pathname;
 
-function isActive(href: string) {
-  if (href === '/') return path === '/';
-  return path.startsWith(href);
+function href(target: string) {
+  return localizedPath(locale, target);
+}
+function isActive(target: string) {
+  const full = localizedPath(locale, target);
+  if (target === '/') return path === full;
+  return path.startsWith(full);
 }
 ---
 
 <header class="site-header">
   <div class="site-header__inner container">
-    <a class="site-header__brand" href={`${base}/`}>
+    <a class="site-header__brand" href={href('/')}>
       <span class="site-header__logo" aria-hidden="true"></span>
       <span>{SITE.title}</span>
     </a>
 
     <nav class="site-nav" aria-label="Main navigation">
       {NAV.map((item) => (
-        <a class:list={['site-nav__link', { 'is-active': isActive(item.href) }]} href={`${base}${item.href}`}>
-          {item.label}
+        <a class:list={['site-nav__link', { 'is-active': isActive(item.href) }]} href={href(item.href)}>
+          {t(item.key)}
         </a>
       ))}
     </nav>
@@ -32,16 +44,17 @@ function isActive(href: string) {
         <a class="icon-btn" href={SOCIAL.linkedin} aria-label="LinkedIn"><Icon name="linkedin" /></a>
         <a class="icon-btn" href={SOCIAL.email} aria-label="Email"><Icon name="email" /></a>
       </div>
+      <LanguageSwitcher locale={locale} />
       <button type="button" class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode"><Icon name="moon" /></button>
-      <a class="icon-btn" href={`${base}/search/`} aria-label="Search"><Icon name="search" /></a>
+      <a class="icon-btn" href={href('/search/')} aria-label={t('search.title')}><Icon name="search" /></a>
       <button type="button" class="icon-btn site-header__menu" id="menu-toggle" aria-label="Open menu" aria-expanded="false"><Icon name="menu" /></button>
     </div>
   </div>
 
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
     {NAV.map((item) => (
-      <a class:list={['mobile-nav__link', { 'is-active': isActive(item.href) }]} href={`${base}${item.href}`}>
-        {item.label}
+      <a class:list={['mobile-nav__link', { 'is-active': isActive(item.href) }]} href={href(item.href)}>
+        {t(item.key)}
       </a>
     ))}
   </nav>

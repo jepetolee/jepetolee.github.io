@@ -1,23 +1,29 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import { getSeries, postUrl } from '../../utils/posts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getSeries, postUrl, slugOf } from '../../../utils/posts';
+import { LOCALES } from '../../../i18n/config';
+import { useTranslations } from '../../../i18n/ui';
 
 export const getStaticPaths = (async () => {
-  const series = await getSeries();
-  return [...series.entries()].map(([name, posts]) => ({
-    params: { series: name },
-    props: { name, posts },
-  }));
+  const routes = [];
+  for (const locale of LOCALES) {
+    const series = await getSeries(locale);
+    for (const [name, posts] of series.entries()) {
+      routes.push({ params: { locale, series: name }, props: { locale, name, posts } });
+    }
+  }
+  return routes;
 }) satisfies GetStaticPaths;
 
-const { name, posts } = Astro.props;
+const { name, posts, locale } = Astro.props;
+const t = useTranslations(locale);
 ---
 
-<BaseLayout title={`${name} 시리즈`} description={`${name} 시리즈의 글 모음`} narrow={true}>
-  <h1 class="page-title">{name} <span class="page-title__tag">시리즈</span></h1>
-  <p class="page-sub">{posts.length}편 · 오래된 순서</p>
+<BaseLayout title={`${name} · ${t('series.badge')}`} description={name} narrow={true} locale={locale}>
+  <h1 class="page-title">{name} <span class="page-title__tag">{t('series.badge')}</span></h1>
+  <p class="page-sub">{t('series.sub', { count: posts.length })}</p>
 
   <div class="post-list">
     {posts.map((post, i) => (
@@ -25,12 +31,13 @@ const { name, posts } = Astro.props;
         <span class="series-entry__num">{i + 1}</span>
         <div class="series-entry__card">
           <PostCard
-            url={postUrl(post.id)}
+            url={postUrl(locale, slugOf(post))}
             title={post.data.title}
             date={post.data.date}
             tags={post.data.tags}
             description={post.data.description}
             category={post.data.category}
+            locale={locale}
           />
         </div>
       </div>

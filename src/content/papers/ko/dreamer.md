@@ -3,7 +3,7 @@ title: "Dreamer: 상상 속에서 정책을 학습하다"
 date: 2022-10-12
 category: 강화학습
 subcategory: World Models
-tags: ["강화학습", "Dreamer", "RSSM", "World Model"]
+tags: ["강화학습", "월드 모델", "인공신경망", "ICLR", "Google DeepMind", "Dreamer", "RSSM", "World Model"]
 paper: "Dream to Control: Learning Behaviors by Latent Imagination"
 paperUrl: "https://arxiv.org/abs/1912.01603"
 authors: "Danijar Hafner et al."

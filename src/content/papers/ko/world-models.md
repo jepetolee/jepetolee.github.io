@@ -3,7 +3,7 @@ title: "World Models: 꿈 속에서 정책을 학습하다"
 date: 2022-09-20
 category: 강화학습
 subcategory: World Models
-tags: ["강화학습", "World Model", "VAE", "RNN"]
+tags: ["강화학습", "월드 모델", "인공신경망", "NeurIPS", "World Model", "VAE", "RNN"]
 paper: "World Models"
 paperUrl: "https://arxiv.org/abs/1803.10122"
 authors: "David Ha, Jürgen Schmidhuber"

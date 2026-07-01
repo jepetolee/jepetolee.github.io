@@ -1,0 +1,165 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getAllTags } from '../../../utils/posts';
+import { isCanonicalTag, STANDARD_TAG_GROUPS, TOPIC_TAGS } from '../../../taxonomy';
+import { LOCALES } from '../../../i18n/config';
+import { localizedPath } from '../../../i18n/utils';
+import { useTranslations, type UIKey } from '../../../i18n/ui';
+
+export const getStaticPaths = (() =>
+  LOCALES.map((locale) => ({ params: { locale }, props: { locale } }))) satisfies GetStaticPaths;
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const tags = await getAllTags(locale);
+const countByTag = new Map(tags.map(({ tag, count }) => [tag, count]));
+const extraTags = tags.filter(({ tag, count }) => !isCanonicalTag(tag) && count > 0);
+
+const groupTitleKey: Record<string, UIKey> = {
+  '탑티어 학회': 'tags.conferences',
+  '회사/연구소': 'tags.orgs',
+};
+const groupDescKey: Record<string, UIKey> = {
+  '탑티어 학회': 'tags.conferencesDesc',
+  '회사/연구소': 'tags.orgsDesc',
+};
+---
+
+<BaseLayout title={t('tags.title')} description={t('tags.sub')} narrow={true} locale={locale}>
+  <h1 class="page-title">{t('tags.title')}</h1>
+  <p class="page-sub">{t('tags.sub')}</p>
+
+  <section class="taxonomy" aria-labelledby="taxonomy-title">
+    <h2 id="taxonomy-title" class="section-title">{t('tags.coreTitle')}</h2>
+    <div class="taxonomy-grid">
+      {TOPIC_TAGS.map(({ tag, description }) => (
+        <a class="taxonomy-card" href={localizedPath(locale, `tags/${encodeURIComponent(tag)}`)}>
+          <span class="taxonomy-card__top">
+            <span class="taxonomy-card__name">{tag}</span>
+            <span class="taxonomy-card__count">{countByTag.get(tag) ?? 0}</span>
+          </span>
+          <span class="taxonomy-card__desc">{description}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="standard-tags" aria-labelledby="standard-tags-title">
+    <h2 id="standard-tags-title" class="section-title">{t('tags.standardTitle')}</h2>
+    <p class="standard-tags__sub">{t('tags.standardSub')}</p>
+    {STANDARD_TAG_GROUPS.map(({ title, tags: groupTags }) => (
+      <section class="standard-group" aria-label={t(groupTitleKey[title])}>
+        <h3 class="standard-group__title">{t(groupTitleKey[title])}</h3>
+        <p class="standard-group__desc">{t(groupDescKey[title])}</p>
+        <div class="tag-cloud">
+          {groupTags.map((tag) => (
+            <a class="tag-cloud__item" href={localizedPath(locale, `tags/${encodeURIComponent(tag)}`)}>
+              {tag} <span class="tag-cloud__count">{countByTag.get(tag) ?? 0}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </section>
+
+  {extraTags.length > 0 && (
+    <section class="extra-tags" aria-labelledby="extra-tags-title">
+      <h2 id="extra-tags-title" class="section-title">{t('tags.extraTitle')}</h2>
+      <div class="tag-cloud">
+        {extraTags.map(({ tag, count }) => (
+          <a class="tag-cloud__item" href={localizedPath(locale, `tags/${encodeURIComponent(tag)}`)}>
+            {tag} <span class="tag-cloud__count">{count}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .page-title { font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .page-sub { color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 2rem; }
+  .taxonomy { margin-bottom: 2.5rem; }
+  .taxonomy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 0.8rem;
+  }
+  .taxonomy-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    min-height: 7rem;
+    padding: 0.9rem 1rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .taxonomy-card:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .taxonomy-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .taxonomy-card__name { font-weight: 600; }
+  .taxonomy-card__count {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    background: var(--color-tag-bg);
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+  }
+  .taxonomy-card__desc {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+  .standard-tags { margin-bottom: 2.5rem; }
+  .standard-tags__sub {
+    color: var(--color-text-muted);
+    font-size: 0.86rem;
+    margin: -0.75rem 0 1.25rem;
+  }
+  .standard-group { margin-bottom: 1.4rem; }
+  .standard-group__title {
+    font-size: 1rem;
+    margin: 0 0 0.2rem;
+  }
+  .standard-group__desc {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    margin: 0 0 0.65rem;
+  }
+  .extra-tags { margin-bottom: 1rem; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .tag-cloud__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--color-text);
+  }
+  .tag-cloud__item:hover { border-color: var(--color-accent); color: var(--color-accent); text-decoration: none; }
+  .tag-cloud__count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background: var(--color-tag-bg);
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+  }
+</style>

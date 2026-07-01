@@ -1,10 +1,13 @@
 ---
+import { DEFAULT_LOCALE, LOCALE_META, type Locale } from '../i18n/config';
+
 interface Props {
   date: Date;
+  locale?: Locale;
 }
-const { date } = Astro.props;
+const { date, locale = DEFAULT_LOCALE } = Astro.props;
 const iso = date.toISOString();
-const formatted = date.toLocaleDateString('ko-KR', {
+const formatted = date.toLocaleDateString(LOCALE_META[locale].bcp47, {
   year: 'numeric',
   month: 'long',
   day: 'numeric',

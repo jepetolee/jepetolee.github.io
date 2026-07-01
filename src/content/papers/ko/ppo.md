@@ -3,7 +3,7 @@ title: "PPO: 단순함으로 안정적인 정책 최적화"
 date: 2022-09-10
 category: 강화학습
 subcategory: Policy Optimization
-tags: ["강화학습", "PPO", "Policy Gradient"]
+tags: ["강화학습", "OpenAI", "PPO", "Policy Gradient"]
 paper: "Proximal Policy Optimization Algorithms"
 paperUrl: "https://arxiv.org/abs/1707.06347"
 authors: "John Schulman et al."

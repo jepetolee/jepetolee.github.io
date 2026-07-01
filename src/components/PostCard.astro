@@ -1,6 +1,9 @@
 ---
 import Icon from './Icon.astro';
 import FormattedDate from './FormattedDate.astro';
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+import { localizedPath } from '../i18n/utils';
+import { useTranslations } from '../i18n/ui';
 
 interface Props {
   url: string;
@@ -10,10 +13,12 @@ interface Props {
   description?: string;
   category?: string;
   kind?: 'post' | 'paper';
+  locale?: Locale;
 }
 
-const { url, title, date, tags = [], description, category, kind = 'post' } = Astro.props;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const { url, title, date, tags = [], description, category, kind = 'post', locale = DEFAULT_LOCALE } =
+  Astro.props;
+const t = useTranslations(locale);
 const badgeLabel = kind === 'paper' ? 'PAPER' : 'POST';
 ---
 
@@ -30,11 +35,11 @@ const badgeLabel = kind === 'paper' ? 'PAPER' : 'POST';
   <div class="post-card__footer">
     <div class="post-card__tags">
       {tags.map((tag) => (
-        <a class="post-tag" href={`${base}/tags/${encodeURIComponent(tag)}/`}>{tag}</a>
+        <a class="post-tag" href={localizedPath(locale, `tags/${encodeURIComponent(tag)}`)}>{tag}</a>
       ))}
     </div>
     <a class="post-card__readmore" href={url}>
-      Read more <Icon name="arrow-right" />
+      {t('common.readMore')} <Icon name="arrow-right" />
     </a>
   </div>
 </article>

@@ -1,51 +1,64 @@
 ---
 import type { GetStaticPaths, Page } from 'astro';
-import type { CollectionEntry } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import { getPublishedPosts, postUrl } from '../../utils/posts';
-import { SITE } from '../../config';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getPublishedPosts, postUrl, slugOf, type Post } from '../../../utils/posts';
+import { SITE } from '../../../config';
+import { LOCALES, type Locale } from '../../../i18n/config';
+import { useTranslations } from '../../../i18n/ui';
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const posts = await getPublishedPosts();
-  return paginate(posts, { pageSize: SITE.postsPerPage });
+  const routes = [];
+  for (const locale of LOCALES) {
+    const posts = await getPublishedPosts(locale);
+    routes.push(
+      ...paginate(posts, {
+        params: { locale },
+        props: { locale },
+        pageSize: SITE.postsPerPage,
+      }),
+    );
+  }
+  return routes;
 }) satisfies GetStaticPaths;
 
 interface Props {
-  page: Page<CollectionEntry<'posts'>>;
+  page: Page<Post>;
+  locale: Locale;
 }
-const { page } = Astro.props;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const { page, locale } = Astro.props as Props;
+const t = useTranslations(locale);
 ---
 
-<BaseLayout title="Insight" description="전체 글 아카이브" narrow={true}>
-  <h1 class="page-title">Insight</h1>
-  <p class="page-sub">전체 글을 시간순으로 모았습니다. ({page.total}편)</p>
+<BaseLayout title={t('insight.title')} description={t('insight.subtitle', { count: page.total })} narrow={true} locale={locale}>
+  <h1 class="page-title">{t('insight.title')}</h1>
+  <p class="page-sub">{t('insight.subtitle', { count: page.total })}</p>
 
   <div class="post-list">
     {page.data.map((post) => (
       <PostCard
-        url={postUrl(post.id)}
+        url={postUrl(locale, slugOf(post))}
         title={post.data.title}
         date={post.data.date}
         tags={post.data.tags}
         description={post.data.description}
         category={post.data.category}
+        locale={locale}
       />
     ))}
   </div>
 
   <nav class="pagination" aria-label="Pagination">
     {page.url.prev ? (
-      <a class="pagination__item" href={page.url.prev}>← 최신</a>
+      <a class="pagination__item" href={page.url.prev}>{t('pagination.newer')}</a>
     ) : (
-      <span class="pagination__item pagination__item--disabled">← 최신</span>
+      <span class="pagination__item pagination__item--disabled">{t('pagination.newer')}</span>
     )}
     <span class="pagination__count">{page.currentPage} / {page.lastPage}</span>
     {page.url.next ? (
-      <a class="pagination__item" href={page.url.next}>이전 →</a>
+      <a class="pagination__item" href={page.url.next}>{t('pagination.older')}</a>
     ) : (
-      <span class="pagination__item pagination__item--disabled">이전 →</span>
+      <span class="pagination__item pagination__item--disabled">{t('pagination.older')}</span>
     )}
   </nav>
 </BaseLayout>

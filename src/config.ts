@@ -21,12 +21,14 @@ export const SITE = {
   },
 } as const;
 
-export const NAV: { label: string; href: string }[] = [
-  { label: 'Home', href: '/' },
-  { label: 'Blog', href: '/insight/' },
-  { label: 'Papers', href: '/papers/' },
-  { label: 'Tags', href: '/tags/' },
-  { label: 'About', href: '/about/' },
+import type { UIKey } from './i18n/ui';
+
+export const NAV: { key: UIKey; href: string }[] = [
+  { key: 'nav.home', href: '/' },
+  { key: 'nav.blog', href: '/insight/' },
+  { key: 'nav.papers', href: '/papers/' },
+  { key: 'nav.tags', href: '/tags/' },
+  { key: 'nav.about', href: '/about/' },
 ];
 
 export const SOCIAL = {
