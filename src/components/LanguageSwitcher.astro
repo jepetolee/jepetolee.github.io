@@ -53,17 +53,21 @@ const options = LOCALES.map((l) => ({
     position: relative;
   }
   .lang-switcher__toggle {
-    width: auto;
-    gap: 0.35rem;
-    padding: 0 0.6rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+  .lang-switcher__toggle :global(svg) {
+    width: 1.125rem;
+    height: 1.125rem;
   }
   .lang-switcher__current {
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
-  @media (max-width: 520px) {
-    .lang-switcher__current { display: none; }
-    .lang-switcher__toggle { width: 2.25rem; padding: 0; }
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
   .lang-switcher__menu {
     position: absolute;
