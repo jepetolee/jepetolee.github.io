@@ -27,8 +27,7 @@ const options = LOCALES.map((l) => ({
     aria-haspopup="true"
     aria-expanded="false"
   >
-    <Icon name="globe" />
-    <span class="lang-switcher__current">{LOCALE_META[locale].label}</span>
+    <Icon name="languages" />
   </button>
   <ul class="lang-switcher__menu" role="menu" aria-label={t('langSwitcher.label')}>
     {options.map((o) => (
@@ -60,14 +59,6 @@ const options = LOCALES.map((l) => ({
   .lang-switcher__toggle :global(svg) {
     width: 1.125rem;
     height: 1.125rem;
-  }
-  .lang-switcher__current {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
   }
   .lang-switcher__menu {
     position: absolute;
