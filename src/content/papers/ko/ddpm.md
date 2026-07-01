@@ -1,7 +1,7 @@
 ---
 title: "DDPM: 노이즈 예측으로 여는 확산 생성 모델"
 date: 2026-07-01
-draft: true
+draft: false
 category: 컴퓨터 비전
 subcategory: 생성 모델
 tags: ["컴퓨터 비전", "디퓨전", "이미지 생성", "NeurIPS", "DDPM", "U-Net"]
