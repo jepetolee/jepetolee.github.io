@@ -9,7 +9,7 @@ paperUrl: "https://arxiv.org/abs/1707.06347"
 authors: "John Schulman et al."
 venue: "arXiv"
 year: 2017
-references: []
+references: ["reinforce", "a3c"]
 description: TRPO의 신뢰 영역 아이디어를 클리핑된 목적 함수로 단순화해, 구현 난이도를 크게 낮추면서도 안정적인 정책 학습을 달성한 알고리즘.
 ---
 

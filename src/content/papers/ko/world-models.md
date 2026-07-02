@@ -9,7 +9,7 @@ paperUrl: "https://arxiv.org/abs/1803.10122"
 authors: "David Ha, Jürgen Schmidhuber"
 venue: "NeurIPS"
 year: 2018
-references: []
+references: ["dyna-q"]
 description: 에이전트가 환경의 압축된 내부 모델을 학습하고, 그 모델이 만든 가상 환경(꿈) 안에서 정책을 훈련한다는 월드 모델 계열의 출발점.
 ---
 
