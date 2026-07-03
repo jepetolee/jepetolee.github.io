@@ -1,0 +1,84 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/ui';
+import { postUrl, slugOf } from '../utils/posts';
+import { localizedPath } from '../i18n/utils';
+
+interface Props {
+  series: string;
+  posts: CollectionEntry<'posts'>[];
+  currentSlug: string;
+  locale?: Locale;
+}
+const { series, posts, currentSlug, locale = DEFAULT_LOCALE } = Astro.props;
+const t = useTranslations(locale);
+---
+{posts.length > 0 && (
+  <nav class="series-nav" aria-label={t('series.badge')}>
+    <p class="series-nav__title">
+      <a href={localizedPath(locale, `series/${encodeURIComponent(series)}`)}>{t('series.badge')}</a>
+      <span class="series-nav__name">{series}</span>
+    </p>
+    <ol class="series-nav__list">
+      {posts.map((post, i) => {
+        const slug = slugOf(post);
+        const current = slug === currentSlug;
+        return (
+          <li class:list={['series-nav__item', { 'is-current': current }]}>
+            {current ? (
+              <span aria-current="page">{i + 1}. {post.data.title}</span>
+            ) : (
+              <a href={postUrl(locale, slug)}>{i + 1}. {post.data.title}</a>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .series-nav {
+    margin: 1.5rem 0 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+  .series-nav__title {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 0.5rem;
+    font-family: var(--font-sans);
+  }
+  .series-nav__title a {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+  }
+  .series-nav__title a:hover { color: var(--color-accent); }
+  .series-nav__name {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+  .series-nav__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    counter-reset: none;
+  }
+  .series-nav__item { margin: 0.25rem 0; }
+  .series-nav__item a { color: var(--color-text-muted); }
+  .series-nav__item a:hover { color: var(--color-accent); }
+  .series-nav__item.is-current span {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+</style>

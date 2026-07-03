@@ -5,6 +5,7 @@ import BaseLayout from './BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Callout from '../components/Callout.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import SeriesNav from '../components/SeriesNav.astro';
 import Giscus from '../components/Giscus.astro';
 import Icon from '../components/Icon.astro';
 import PostCard from '../components/PostCard.astro';
@@ -64,7 +65,10 @@ const related = seriesPosts.filter((p) => slugOf(p) !== slugOf(post)).slice(0, 3
       </Callout>
     )}
 
-    <TableOfContents headings={headings} locale={locale} />
+    <div class="post-panels">
+      <TableOfContents headings={headings} locale={locale} />
+      {series && <SeriesNav series={series} posts={seriesPosts} currentSlug={slugOf(post)} locale={locale} />}
+    </div>
 
     <div class="post-article__body prose">
       <slot />
@@ -140,5 +144,16 @@ const related = seriesPosts.filter((p) => slugOf(p) !== slugOf(post)).slice(0, 3
   .series-related {
     max-width: var(--max-width);
     margin: 3rem auto 0;
+  }
+  .post-panels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .post-panels :global(.toc),
+  .post-panels :global(.series-nav) {
+    flex: 1 1 260px;
+    margin: 1.5rem 0 2rem;
   }
 </style>
