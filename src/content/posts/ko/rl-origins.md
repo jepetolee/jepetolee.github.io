@@ -3,6 +3,7 @@ title: "강화학습의 근간 (1): 파블로프의 개와 벨만의 방정식"
 date: 2026-07-02
 draft: false
 category: 개념 정리
+series: 강화학습의 근간
 tags: ["강화학습", "머신 러닝", "동적 계획법", "MDP"]
 description: 강화학습의 두 뿌리를 소개한다 — 파블로프의 조건반사와 손다이크의 효과의 법칙에서 나온 "시행착오 학습"의 심리학, 그리고 벨만의 동적 계획법에서 나온 "최적 제어"의 수학. 두 흐름이 MDP와 벨만 방정식 위에서 만나 강화학습이 되는 과정과, TD 오차가 도파민 신호로 재발견되는 반전까지.
 tldr:
@@ -49,4 +50,6 @@ DP의 한계도 명확했다: (1) 모델을 알아야 하고, (2) 모든 상태�
 
 ## 이 시리즈의 지도
 
-여기서 갈라지는 계보를 이 블로그의 리뷰들이 따라간다: 예측 문제를 형식화한 [TD 학습](/papers/td-learning/)(1988), 행동 가치로 제어까지 푸는 [Q-learning](/papers/q-learning/)(1992), 경험과 계획을 통합한 [Dyna-Q](/papers/dyna-q/)(1990) — 그리고 가치를 거치지 않고 정책을 직접 미는 [REINFORCE](/papers/reinforce/)(1992), 둘을 합친 [Actor-Critic](/papers/actor-critic/)(1983)과 그 현대적 후손들([A3C](/papers/a3c/), [PPO](/papers/ppo/), [SAC](/papers/sac/)). 가치와 정책의 이 양분 구도는 [다음 글](/insight/rl-value-policy-map/)에서 지도로 정리한다.
+이 글은 역사만 다뤘다 — 여기서 등장한 개념들을 시리즈가 바닥부터 다시 쌓는다. [(2)](/insight/rl-mdp/)에서 에이전트-환경 루프(상태·관측·행동·보상, 완전/부분 관측과 POMDP)와 마르코프 성질에서 MP → MRP → MDP로 이어지는 형식화를, [(3)](/insight/rl-dynamic-programming/)에서 모델을 아는 세계의 계획법인 동적 계획법(policy evaluation, policy iteration, value iteration)을, [(4)](/insight/rl-mc-td/)에서 모델 없는 예측의 두 축인 몬테카를로와 TD, 그리고 둘을 잇는 TD(λ)를, [(5)](/insight/rl-bandits-ucb/)에서 탐험의 이론(Multi-Armed Bandit, regret, UCB)을, [(6)](/insight/rl-model-free-control/)에서 model-free 제어(ε-greedy, GLIE-MC, SARSA, importance sampling, Q-learning, DQN)를, [(7)](/insight/rl-policy-gradient/)에서 정책을 직접 최적화하는 갈래(REINFORCE → natural gradient → TRPO → PPO)를, [(8)](/insight/rl-planning-mcts/)에서 모델을 배워 계획하는 노선(Dyna-Q, MCTS, 알파고)을 다룬다.
+
+원전 리뷰들도 이 계보를 따라간다: 예측 문제를 형식화한 [TD 학습](/papers/td-learning/)(1988), 행동 가치로 제어까지 푸는 [Q-learning](/papers/q-learning/)(1992), 그것에 계획을 얹은 [Dyna-Q](/papers/dyna-q/)(1990) — 그리고 정책을 직접 미는 [REINFORCE](/papers/reinforce/)(1992), 둘을 합친 [Actor-Critic](/papers/actor-critic/)(1983)과 그 현대적 후손들([A3C](/papers/a3c/), [PPO](/papers/ppo/), [SAC](/papers/sac/)). 가치와 정책의 양분 구도 전체는 [시리즈를 닫는 지도](/insight/rl-value-policy-map/)에서 한 장으로 접는다.

@@ -3,7 +3,7 @@ title: "Dyna: 경험으로 배우고, 상상으로 계획하다"
 date: 2026-07-02
 draft: false
 category: 강화학습
-subcategory: World Models
+subcategory: Value Methods
 tags: ["강화학습", "ICML", "Dyna-Q", "model-based RL", "계획"]
 paper: "Integrated Architectures for Learning, Planning, and Reacting Based on Approximating Dynamic Programming"
 paperUrl: "https://doi.org/10.1016/B978-1-55860-141-3.50030-4"
